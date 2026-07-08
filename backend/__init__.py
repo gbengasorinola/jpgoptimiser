@@ -1,0 +1,1 @@
+"""JPG Optimiser backend package."""
