@@ -197,13 +197,18 @@
       font-size: 0.8rem;
       color: var(--text-muted);
       background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
     }
 
     footer a {
       color: var(--text-muted);
       text-decoration: none;
       transition: 0.15s ease;
-      margin: 0 8px;
+      margin: 0 4px;
+      font-weight: 500;
     }
 
     footer a:hover {
@@ -308,6 +313,43 @@
     }
     .cookie-consent-banner button:hover {
       background: var(--primary-hover);
+    }
+
+    @media (max-width: 600px) {
+      .header-container {
+        padding: 12px 16px;
+      }
+      .logo-text {
+        font-size: 1.15rem;
+      }
+      .nav-link {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+      .main-container {
+        padding: 30px 16px 60px;
+      }
+      .about-card {
+        padding: 24px 16px;
+      }
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 16px;
+      }
+      h2 {
+        font-size: 1.25rem;
+        margin-top: 24px;
+      }
+      .cookie-consent-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+      }
+      .cookie-consent-banner button {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>
