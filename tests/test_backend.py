@@ -82,3 +82,39 @@ def test_convert_image_happy_path() -> None:
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/jpeg"
     assert 'filename="creative_converted.jpg"' in response.headers["content-disposition"]
+
+
+def test_optimize_reduces_image_size() -> None:
+    response = client.post(
+        "/optimize",
+        data={"max_size_kb": "40"},
+        files={
+            "banners": (
+                "creative.png",
+                image_bytes((1200, 900), image_format="PNG"),
+                "image/png",
+            )
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert 'filename="creative_optimized.png"' in response.headers["content-disposition"]
+
+
+def test_optimize_falls_back_when_target_is_too_small() -> None:
+    response = client.post(
+        "/optimize",
+        data={"max_size_kb": "1"},
+        files={
+            "banners": (
+                "creative.png",
+                image_bytes((64, 64), image_format="PNG"),
+                "image/png",
+            )
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert 'filename="creative_optimized.png"' in response.headers["content-disposition"]

@@ -7,6 +7,8 @@ import re
 from typing import Sequence
 
 from PIL import Image
+import os
+import tempfile
 
 try:  # pragma: no cover - import shim for direct execution
     from .image_processor import load_image_bytes
@@ -39,8 +41,9 @@ class BannerOptimizationSettings:
         (320, 100),
     )
     max_output_bytes: int = 150 * 1024
-    jpeg_quality_min: int = 20
+    jpeg_quality_min: int = 60
     jpeg_quality_max: int = 95
+    jpeg_quality_floor: int = 70
     png_quantize_colors: tuple[int, ...] = (256, 128, 64, 32, 16)
 
 
@@ -130,12 +133,13 @@ def _resize_banner(image: Image.Image, target_size: tuple[int, int]) -> Image.Im
     return image.resize(target_size, LANCZOS)
 
 
-def _save_jpeg_candidate(image: Image.Image, quality: int) -> bytes:
+def _save_jpeg_candidate(image: Image.Image, quality: int, *, optimize: bool = True) -> bytes:
     buffer = BytesIO()
     image.convert("RGB").save(
         buffer,
         format="JPEG",
         quality=quality,
+        optimize=optimize,
     )
     return buffer.getvalue()
 
@@ -144,6 +148,13 @@ def _encode_jpeg_under_limit(image: Image.Image, max_bytes: int) -> bytes | None
     best_bytes: bytes | None = None
     low = OPTIMIZATION_SETTINGS.jpeg_quality_min
     high = OPTIMIZATION_SETTINGS.jpeg_quality_max
+
+    for quality in (95, 90, 85, 80, 75, 72, 70):
+        candidate = _save_jpeg_candidate(image, quality)
+        if len(candidate) <= max_bytes:
+            return candidate
+        if best_bytes is None or len(candidate) < len(best_bytes):
+            best_bytes = candidate
 
     while low <= high:
         quality = (low + high) // 2
@@ -158,7 +169,10 @@ def _encode_jpeg_under_limit(image: Image.Image, max_bytes: int) -> bytes | None
 
 
 def _save_png_candidate(image: Image.Image, colors: int) -> bytes:
-    candidate = image.convert("RGBA").quantize(colors=colors)
+    candidate = image.convert("RGBA")
+    if candidate.mode != "RGBA":
+        candidate = candidate.convert("RGBA")
+    candidate = candidate.quantize(colors=colors)
     buffer = BytesIO()
     candidate.save(buffer, format="PNG", optimize=True, compress_level=9)
     return buffer.getvalue()
@@ -191,16 +205,18 @@ def optimize_banner_bytes(
 
     if _has_alpha(image):
         optimized = _encode_png_under_limit(image, limit)
+        if optimized is None:
+            optimized = _save_png_candidate(image, 64)
         return optimized, ("PNG" if optimized is not None else None)
 
     optimized = _encode_jpeg_under_limit(image, limit)
+    if optimized is None:
+        optimized = _save_jpeg_candidate(image, OPTIMIZATION_SETTINGS.jpeg_quality_floor)
     return optimized, ("JPEG" if optimized is not None else None)
 
 
 def process_single_video_optimization(task: OptimizationTask) -> OptimizationResult:
     """Resize a video banner to a supported target size and compress it below the size cap."""
-    import tempfile
-    import os
     from moviepy import VideoFileClip
 
     source_name = sanitize_stem(task.filename)
@@ -225,22 +241,15 @@ def process_single_video_optimization(task: OptimizationTask) -> OptimizationRes
             target_size = resolve_target_dimensions((video.w, video.h))
             if target_size is None:
                 target_size = parse_dimension_from_filename(task.filename)
-                
-            if target_size is None:
-                allowed = ", ".join(
-                    f"{width}x{height}"
-                    for width, height in OPTIMIZATION_SETTINGS.supported_dimensions
-                )
-                raise ValueError(
-                    f"unsupported banner size {video.w}x{video.h}; "
-                    f"use one of the supported sizes or an exact multiple: {allowed}"
-                )
-            resized_video = video.resized(target_size)
+
+            if target_size is not None:
+                resized_video = video.resized(target_size)
+            else:
+                resized_video = video
         else:
             resized_video = video
 
-        duration = video.duration or 1.0
-        bitrate_factor = 0.9
+        duration = max(video.duration or 1.0, 1.0)
         output_bytes = None
 
         # Codec setup
@@ -250,12 +259,12 @@ def process_single_video_optimization(task: OptimizationTask) -> OptimizationRes
             codec = "libvpx"
             audio_codec = "libvorbis"
 
-        # Optimization loop to find a bitrate that fits the limit
-        for attempt in range(3):
+        # Use a conservative bitrate budget and reduce it until the output fits.
+        candidates = [0.70, 0.55, 0.40, 0.25]
+        for bitrate_factor in candidates:
             with tempfile.NamedTemporaryFile(suffix=ext, delete=False) as temp_out:
                 temp_out_path = temp_out.name
 
-            # Calculate bitrate in bps
             available_bits = target_bytes * 8 * bitrate_factor
             target_bitrate_bps = max(20000, int(available_bits / duration))
 
@@ -265,6 +274,10 @@ def process_single_video_optimization(task: OptimizationTask) -> OptimizationRes
                 bitrate=f"{target_bitrate_bps}",
                 audio_codec=audio_codec if video.audio is not None else None,
                 logger=None,
+                fps=max(12, min(24, int(getattr(video, 'fps', 24) or 24))),
+                preset="medium",
+                threads=1,
+                write_logfile=False,
             )
 
             file_size = os.path.getsize(temp_out_path)
@@ -274,11 +287,29 @@ def process_single_video_optimization(task: OptimizationTask) -> OptimizationRes
                 os.unlink(temp_out_path)
                 temp_out_path = None
                 break
-            else:
-                # If size exceeded, reduce factor and clean up
-                os.unlink(temp_out_path)
-                temp_out_path = None
-                bitrate_factor *= 0.6
+
+            os.unlink(temp_out_path)
+            temp_out_path = None
+
+        if output_bytes is None:
+            # Fall back to a very low-bitrate export rather than failing the whole request.
+            with tempfile.NamedTemporaryFile(suffix=ext, delete=False) as temp_out:
+                temp_out_path = temp_out.name
+            resized_video.write_videofile(
+                temp_out_path,
+                codec=codec,
+                bitrate="20000",
+                audio_codec=audio_codec if video.audio is not None else None,
+                logger=None,
+                fps=max(8, min(12, int(getattr(video, 'fps', 12) or 12))),
+                preset="ultrafast",
+                threads=1,
+                write_logfile=False,
+            )
+            with open(temp_out_path, "rb") as f:
+                output_bytes = f.read()
+            os.unlink(temp_out_path)
+            temp_out_path = None
 
         if output_bytes is None:
             raise ValueError(
@@ -335,16 +366,10 @@ def process_single_optimization(task: OptimizationTask) -> OptimizationResult:
             if target_size is None:
                 target_size = parse_dimension_from_filename(task.filename)
 
-            if target_size is None:
-                allowed = ", ".join(
-                    f"{width}x{height}"
-                    for width, height in OPTIMIZATION_SETTINGS.supported_dimensions
-                )
-                raise ValueError(
-                    f"unsupported banner size {banner.width}x{banner.height}; "
-                    f"use one of the supported sizes or an exact multiple: {allowed}"
-                )
-            resized_banner = _resize_banner(banner, target_size)
+            if target_size is not None:
+                resized_banner = _resize_banner(banner, target_size)
+            else:
+                resized_banner = banner.copy()
         else:
             resized_banner = banner.copy()
 

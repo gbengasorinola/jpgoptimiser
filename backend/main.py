@@ -509,6 +509,54 @@ async def converter_frontend() -> Response:
     )
 
 
+@app.get("/about", include_in_schema=False)
+@app.get("/about/", include_in_schema=False)
+async def about_frontend() -> Response:
+    ABOUT_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "about.html"
+    ABOUT_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "about" / "index.html"
+
+    if ABOUT_DIST_INDEX.exists():
+        return FileResponse(ABOUT_DIST_INDEX)
+    if ABOUT_INDEX.exists():
+        return FileResponse(ABOUT_INDEX)
+    return Response(
+        content="About page not found.",
+        media_type="text/plain",
+    )
+
+
+@app.get("/privacy", include_in_schema=False)
+@app.get("/privacy/", include_in_schema=False)
+async def privacy_frontend() -> Response:
+    PRIVACY_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "privacy.html"
+    PRIVACY_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "privacy" / "index.html"
+
+    if PRIVACY_DIST_INDEX.exists():
+        return FileResponse(PRIVACY_DIST_INDEX)
+    if PRIVACY_INDEX.exists():
+        return FileResponse(PRIVACY_INDEX)
+    return Response(
+        content="Privacy page not found.",
+        media_type="text/plain",
+    )
+
+
+@app.get("/terms", include_in_schema=False)
+@app.get("/terms/", include_in_schema=False)
+async def terms_frontend() -> Response:
+    TERMS_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "terms.html"
+    TERMS_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "terms" / "index.html"
+
+    if TERMS_DIST_INDEX.exists():
+        return FileResponse(TERMS_DIST_INDEX)
+    if TERMS_INDEX.exists():
+        return FileResponse(TERMS_INDEX)
+    return Response(
+        content="Terms page not found.",
+        media_type="text/plain",
+    )
+
+
 @app.post("/convert")
 async def convert(request: Request) -> Response:
     form = await request.form()

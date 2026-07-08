@@ -13,3 +13,4 @@ venv/
 htmlcov/
 
 dist/.DS_Store
+.vercel
