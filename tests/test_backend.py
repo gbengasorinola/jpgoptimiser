@@ -118,3 +118,31 @@ def test_optimize_falls_back_when_target_is_too_small() -> None:
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/png"
     assert 'filename="creative_optimized.png"' in response.headers["content-disposition"]
+
+
+def test_contact_get() -> None:
+    response = client.get("/contact")
+    assert response.status_code == 200
+
+
+def test_contact_post_success() -> None:
+    payload = {
+        "name": "Jane Doe",
+        "email": "jane@example.com",
+        "subject": "Inquiry",
+        "message": "Hello, this is a test message."
+    }
+    response = client.post("/contact", json=payload)
+    assert response.status_code == 200
+    assert response.text == "Message sent successfully."
+
+
+def test_contact_post_validation_error() -> None:
+    payload = {
+        "name": "",
+        "email": "jane@example.com",
+        "subject": "Inquiry",
+        "message": "Hello, this is a test message."
+    }
+    response = client.post("/contact", json=payload)
+    assert response.status_code == 400

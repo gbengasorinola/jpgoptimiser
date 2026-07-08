@@ -10,6 +10,7 @@ SOURCE_CONVERTER = PROJECT_ROOT / "frontend" / "converter.html"
 SOURCE_ABOUT = PROJECT_ROOT / "frontend" / "about.html"
 SOURCE_PRIVACY = PROJECT_ROOT / "frontend" / "privacy.html"
 SOURCE_TERMS = PROJECT_ROOT / "frontend" / "terms.html"
+SOURCE_CONTACT = PROJECT_ROOT / "frontend" / "contact.html"
 
 DIST_DIR = PROJECT_ROOT / "dist"
 DIST_INDEX = DIST_DIR / "index.html"
@@ -23,6 +24,8 @@ PRIVACY_DIR = DIST_DIR / "privacy"
 PRIVACY_INDEX = PRIVACY_DIR / "index.html"
 TERMS_DIR = DIST_DIR / "terms"
 TERMS_INDEX = TERMS_DIR / "index.html"
+CONTACT_DIR = DIST_DIR / "contact"
+CONTACT_INDEX = CONTACT_DIR / "index.html"
 
 
 def main() -> None:
@@ -32,6 +35,7 @@ def main() -> None:
     ABOUT_DIR.mkdir(parents=True, exist_ok=True)
     PRIVACY_DIR.mkdir(parents=True, exist_ok=True)
     TERMS_DIR.mkdir(parents=True, exist_ok=True)
+    CONTACT_DIR.mkdir(parents=True, exist_ok=True)
     
     shutil.copy2(SOURCE_INDEX, DIST_INDEX)
     shutil.copy2(SOURCE_INDEX, OPTIMISER_INDEX)
@@ -39,6 +43,7 @@ def main() -> None:
     shutil.copy2(SOURCE_ABOUT, ABOUT_INDEX)
     shutil.copy2(SOURCE_PRIVACY, PRIVACY_INDEX)
     shutil.copy2(SOURCE_TERMS, TERMS_INDEX)
+    shutil.copy2(SOURCE_CONTACT, CONTACT_INDEX)
     
     print(f"Built {DIST_INDEX}")
     print(f"Built {OPTIMISER_INDEX}")
@@ -46,6 +51,7 @@ def main() -> None:
     print(f"Built {ABOUT_INDEX}")
     print(f"Built {PRIVACY_INDEX}")
     print(f"Built {TERMS_INDEX}")
+    print(f"Built {CONTACT_INDEX}")
 
 
 if __name__ == "__main__":

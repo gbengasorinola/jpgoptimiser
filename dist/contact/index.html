@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>About Us — jpgoptimiser.com</title>
+  <title>Contact Us — jpgoptimiser.com</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
       --primary-gradient: linear-gradient(135deg, #10b981, #059669);
       --radius: 10px;
       --radius-sm: 6px;
-      --max-width: 800px;
+      --max-width: 600px;
     }
 
     [data-theme="light"] {
@@ -154,48 +154,129 @@
       font-family: 'Outfit', sans-serif;
       font-size: 2.2rem;
       font-weight: 800;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
       letter-spacing: -0.02em;
     }
 
-    h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-top: 32px;
-      margin-bottom: 12px;
-      letter-spacing: -0.01em;
-    }
-
-    p {
-      font-size: 0.95rem;
-      line-height: 1.6;
+    .subtitle {
       color: var(--text-muted);
-      margin-bottom: 16px;
+      font-size: 1rem;
+      margin-bottom: 32px;
+      line-height: 1.5;
     }
 
-    p strong {
+    /* Contact Form Fields */
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
       color: var(--text);
     }
 
-    ul {
-      margin-left: 20px;
-      margin-bottom: 16px;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    li {
-      margin-bottom: 8px;
-      line-height: 1.6;
-    }
-
-    .contact-info {
-      background: rgba(255, 255, 255, 0.02);
+    .form-input, .form-textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.15);
       border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 12px 16px;
       border-radius: var(--radius-sm);
-      padding: 20px;
-      margin-top: 24px;
+      outline: none;
+      transition: 0.15s ease;
+    }
+
+    [data-theme="light"] .form-input, 
+    [data-theme="light"] .form-textarea {
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-soft);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      background: var(--primary-gradient);
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      transition: opacity 0.15s ease;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.95;
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    /* Toast Notification System */
+    .toast {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      padding: 14px 24px;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast-success {
+      background: #10b981;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toast-error {
+      background: #ef4444;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     footer {
@@ -223,7 +304,6 @@
       color: var(--text);
     }
 
-    /* Theme menu controls style (simplified header compatibility) */
     .theme-toggle-wrapper {
       position: relative;
       display: inline-block;
@@ -324,6 +404,10 @@
       background: var(--primary-hover);
     }
 
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     @media (max-width: 600px) {
       .header-container {
         padding: 12px 16px;
@@ -344,10 +428,6 @@
       h1 {
         font-size: 1.8rem;
         margin-bottom: 16px;
-      }
-      h2 {
-        font-size: 1.25rem;
-        margin-top: 24px;
       }
       .cookie-consent-banner {
         flex-direction: column;
@@ -380,8 +460,7 @@
       <div class="header-nav">
         <a href="/" class="nav-link">Optimiser</a>
         <a href="/converter" class="nav-link">Converter</a>
-        <a href="/about" class="nav-link active">About</a>
-        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/about" class="nav-link">About</a>
         
         <div class="theme-toggle-wrapper">
           <button class="theme-toggle" id="themeToggleBtn" type="button" aria-label="Choose theme" title="Choose theme mode">
@@ -402,37 +481,45 @@
   </header>
 
   <main class="main-container">
-    <article class="about-card">
-      <h1>About Us</h1>
+    <div class="about-card">
+      <h1>Contact Us</h1>
+      <p class="subtitle">Have questions or feedback? Drop us a line below and we'll get back to you shortly. You can also reach us directly at <strong>support@jpgoptimiser.com</strong>.</p>
       
-      <p>Welcome to <strong>jpgoptimiser.com</strong>, a free online platform engineered to optimize digital media files for maximum web performance. Our primary mission is to simplify asset preparation, helping developers, marketers, and design teams improve loading speeds and SEO search rankings.</p>
-
-      <h2>Our Core Technology</h2>
-      <p>We believe file optimization shouldn't compromise visual clarity. Our suite of browser-driven tools includes:</p>
-      <ul>
-        <li><strong>Online Image Optimizer:</strong> Shave unnecessary metadata bytes and intelligently compress images to targeted limits in KB.</li>
-        <li><strong>Bulk Image Resizer:</strong> Instantly process multiple banners into standardized campaign dimensions (like 300x250, 728x90) with background color extension.</li>
-        <li><strong>Logo Watermark Tool:</strong> Automatically stamp branding onto your images utilizing smart position alignment.</li>
-        <li><strong>PNG to WebP Converter:</strong> Instantly convert legacy image formats into modern, next-generation WebP types for responsive layouts.</li>
-      </ul>
-
-      <h2>Why Core Web Vitals Matter</h2>
-      <p>Unoptimised images account for the majority of a page's download payload. By utilizing <strong>jpgoptimiser.com</strong> to reduce file sizes, you directly enhance your website's Largest Contentful Paint (LCP) and Interaction to Next Paint (INP) metrics, ensuring visitors enjoy faster, more responsive browsing experiences.</p>
-
-      <h2>Get in Touch</h2>
-      <p>We are constantly improving our algorithms and features. If you have feedback, questions, or feature requests, feel free to contact us:</p>
-      
-      <div class="contact-info">
-        <p><strong>Support & Feedback:</strong> support@jpgoptimiser.com</p>
-        <p><strong>Response Time:</strong> Typically within 24-48 business hours.</p>
-      </div>
-    </article>
+      <form id="contactForm" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="nameInput">Name</label>
+          <input class="form-input" id="nameInput" type="text" placeholder="Your Name" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="emailInput">Email Address</label>
+          <input class="form-input" id="emailInput" type="email" placeholder="you@example.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="subjectInput">Subject</label>
+          <input class="form-input" id="subjectInput" type="text" placeholder="What is this regarding?" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="messageInput">Message</label>
+          <textarea class="form-textarea" id="messageInput" placeholder="Your message here..." required></textarea>
+        </div>
+        
+        <button class="submit-btn" id="submitBtn" type="submit">
+          <span class="spinner" id="btnSpinner"></span>
+          <span id="btnText">Send Message</span>
+        </button>
+      </form>
+    </div>
   </main>
 
   <footer>
     <p>&copy; 2026 jpgoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
     <p>Built for clean bulk conversion workflows.</p>
   </footer>
+
+  <div id="toastNotification" class="toast"></div>
 
   <script>
     const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -489,6 +576,68 @@
 
     const savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'system';
     applyTheme(savedTheme);
+
+    // Form submission logic
+    const contactForm = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const btnText = document.getElementById('btnText');
+    const toastNotification = document.getElementById('toastNotification');
+
+    const showToast = (message, isError = false) => {
+      toastNotification.className = `toast ${isError ? 'toast-error' : 'toast-success'} show`;
+      toastNotification.textContent = message;
+      setTimeout(() => {
+        toastNotification.classList.remove('show');
+      }, 4000);
+    };
+
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('nameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
+      const subject = document.getElementById('subjectInput').value.trim();
+      const message = document.getElementById('messageInput').value.trim();
+
+      if (!name || !email || !subject || !message) {
+        showToast('Please fill out all fields.', true);
+        return;
+      }
+
+      // Quick email regex validation
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Please enter a valid email address.', true);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      btnSpinner.style.display = 'block';
+      btnText.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, email, subject, message })
+        });
+
+        if (response.ok) {
+          showToast('Thank you! Your message has been sent successfully.');
+          contactForm.reset();
+        } else {
+          showToast('Failed to send message. Please try again later.', true);
+        }
+      } catch (err) {
+        showToast('An error occurred. Please check your connection.', true);
+      } finally {
+        submitBtn.disabled = false;
+        btnSpinner.style.display = 'none';
+        btnText.textContent = 'Send Message';
+      }
+    });
 
     // Cookie Consent Banner Logic
     document.addEventListener('DOMContentLoaded', () => {

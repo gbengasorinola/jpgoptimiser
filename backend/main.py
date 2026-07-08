@@ -557,6 +557,41 @@ async def terms_frontend() -> Response:
     )
 
 
+@app.get("/contact", include_in_schema=False)
+@app.get("/contact/", include_in_schema=False)
+async def contact_frontend() -> Response:
+    CONTACT_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "contact.html"
+    CONTACT_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "contact" / "index.html"
+
+    if CONTACT_DIST_INDEX.exists():
+        return FileResponse(CONTACT_DIST_INDEX)
+    if CONTACT_INDEX.exists():
+        return FileResponse(CONTACT_INDEX)
+    return Response(
+        content="Contact page not found.",
+        media_type="text/plain",
+    )
+
+
+@app.post("/contact")
+async def contact_submit(request: Request) -> Response:
+    try:
+        body = await request.json()
+        name = body.get("name")
+        email = body.get("email")
+        subject = body.get("subject")
+        message = body.get("message")
+        
+        if not name or not email or not subject or not message:
+            return Response(content="All fields are required.", status_code=400)
+            
+        print(f"Contact form submitted by {name} ({email}): Subject: {subject}\nMessage: {message}")
+        return Response(content="Message sent successfully.", status_code=200)
+    except Exception as e:
+        print(f"Error handling contact submission: {e}")
+        return Response(content="An internal error occurred.", status_code=500)
+
+
 @app.post("/convert")
 async def convert(request: Request) -> Response:
     form = await request.form()
