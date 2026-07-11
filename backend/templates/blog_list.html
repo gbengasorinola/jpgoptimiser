@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+  .blog-hero {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .blog-hero h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+  .blog-hero p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  
+  .blog-container-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .blog-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .blog-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition-normal);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .blog-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .blog-card-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+  }
+
+  .blog-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .blog-category-badge {
+    background: var(--primary-soft);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+
+  .blog-card h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text);
+  }
+
+  .blog-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .blog-card-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: rgba(0, 0, 0, 0.05);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <section class="blog-hero">
+    <h1>Image Optimization <mark>Knowledge Base</mark></h1>
+    <p>Guides, resources, and deep dives on image compression, formatting standards, and web speed optimization.</p>
+  </section>
+
+  <div class="blog-container-wrapper">
+    <!-- Left skyscraper ad (desktop only) -->
+    <aside class="ad-slot ad-sidebar ad-sidebar-left" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="ad-placeholder">Skyscraper Ad (160x600)</div>
+    </aside>
+
+    <div class="main-workspace-content">
+      <div class="blog-grid">
+        {% for slug, post in articles.items() %}
+        <a href="/blog/{{ slug }}" class="blog-card">
+          <div class="blog-card-body">
+            <div class="blog-card-meta">
+              <span class="blog-category-badge">{{ post.category }}</span>
+              <span>{{ post.date }}</span>
+              <span>&bull;</span>
+              <span>{{ post.reading_time }}</span>
+            </div>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.summary }}</p>
+          </div>
+          <div class="blog-card-footer">
+            <span>Read Article</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+
+      <!-- Mid-Page Ad Slot (high visibility between cards) -->
+      <div class="ad-slot ad-in-content" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <div class="ad-placeholder">In-Feed Native Banner Ad (728x90)</div>
+      </div>
+    </div>
+
+    <!-- Right skyscraper ad (desktop only) -->
+    <aside class="ad-slot ad-sidebar ad-sidebar-right" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <div class="ad-placeholder">Skyscraper Ad (160x600)</div>
+    </aside>
+  </div>
+{% endblock %}

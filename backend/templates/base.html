@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>
+    (function() {
+      try {
+        const savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'dark';
+        const resolvedTheme = savedTheme === 'system' 
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : savedTheme;
+        document.documentElement.setAttribute('data-theme', resolvedTheme);
+      } catch (e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="jpgoptimiser-api-base" content="">
+  <title>{{ seo_data.title }}</title>
+  <meta name="description" content="{{ seo_data.meta_description }}">
+  
+  <!-- Canonical and Social Metadata -->
+  {% if seo_data.canonical %}
+  <link rel="canonical" href="https://jpgoptimiser.com{{ seo_data.canonical }}">
+  {% endif %}
+  <meta property="og:title" content="{{ seo_data.title }}">
+  <meta property="og:description" content="{{ seo_data.meta_description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jpgoptimiser.com{{ seo_data.canonical or '' }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ seo_data.title }}">
+  <meta name="twitter:description" content="{{ seo_data.meta_description }}">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Inline Premium CSS (No external roundtrips for maximum Lighthouse scores) -->
+  {% include "styles.html" %}
+  <style>
+    /* Premium Revenue-Driven Ad slots styling overrides */
+    .ad-slot {
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      transition: var(--transition-normal);
+      color: var(--text-muted);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* CLS containment placeholder */
+    .ad-slot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+
+    .ad-label {
+      position: absolute;
+      top: 6px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      opacity: 0.5;
+      z-index: 1;
+    }
+
+    .ad-placeholder {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+      opacity: 0.6;
+      padding: 10px;
+      z-index: 1;
+    }
+
+    .ad-leaderboard {
+      width: 100%;
+      max-width: 960px;
+      height: 90px;
+      margin: 0 auto;
+    }
+
+    .ad-sidebar {
+      width: 160px;
+      height: 600px;
+      position: absolute;
+      top: 100px;
+      z-index: 5;
+      display: none;
+    }
+
+    .ad-sidebar-left {
+      right: calc(100% + 24px);
+    }
+
+    .ad-sidebar-right {
+      left: calc(100% + 24px);
+    }
+
+    .ad-in-content {
+      width: 100%;
+      max-width: 960px;
+      height: 120px;
+      margin: 20px auto;
+    }
+
+    @media (min-width: 1360px) {
+      .ad-sidebar {
+        display: flex;
+      }
+    }
+
+    /* Shimmer Animation for Ads skeletons */
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+  </style>
+  
+  {% block extra_head %}{% endblock %}
+
+  <!-- Injected JSON-LD Schemas -->
+  {% if schema_json %}
+  <script type="application/ld+json">
+    {{ schema_json | safe }}
+  </script>
+  {% endif %}
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <a href="/" class="logo-container">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+        </div>
+        <div class="logo-text">jpg<span>optimiser.com</span></div>
+      </a>
+      <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12" class="line-middle"></line>
+          <line x1="3" y1="6" x2="21" y2="6" class="line-top"></line>
+          <line x1="3" y1="18" x2="21" y2="18" class="line-bottom"></line>
+        </svg>
+      </button>
+      <nav class="header-nav" id="headerNav">
+        <!-- Resize Dropdown -->
+        <div class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false" type="button">
+            Resize
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dropdown-column">
+              <a href="/resize-image">
+                <strong>Image Resizer</strong>
+                <span>Bulk adjust image dimensions</span>
+              </a>
+              <a href="/resize-video">
+                <strong>Video Resizer</strong>
+                <span>Scale MP4 & WebM resolution</span>
+              </a>
+              <hr class="dropdown-divider">
+              <a href="/resize-image-to-1080x1080">Resize to 1080x1080</a>
+              <a href="/resize-image-to-1920x1080">Resize to 1920x1080</a>
+              <a href="/resize-image-for-instagram">Resize for Instagram</a>
+              <a href="/resize-image-for-facebook">Resize for Facebook</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compress Dropdown -->
+        <div class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false" type="button">
+            Compress
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dropdown-column">
+              <a href="/compress-image">
+                <strong>Image Compressor</strong>
+                <span>Shrink images to target KB limits</span>
+              </a>
+              <a href="/compress-video">
+                <strong>Video Compressor</strong>
+                <span>Compress MP4 & WebM sizes</span>
+              </a>
+              <hr class="dropdown-divider">
+              <a href="/compress-image-to-50kb">Compress to 50KB</a>
+              <a href="/compress-image-to-100kb">Compress to 100KB</a>
+              <a href="/compress-image-under-1mb">Compress under 1MB</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Convert Dropdown -->
+        <div class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false" type="button">
+            Convert
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="dropdown-menu dropdown-menu-double">
+            <div class="dropdown-grid">
+              <div class="dropdown-column">
+                <a href="/convert-image">
+                  <strong>Image Converter</strong>
+                  <span>Transform image file formats</span>
+                </a>
+                <a href="/convert-video">
+                  <strong>Video Converter</strong>
+                  <span>Transcode MP4, WebM & GIF</span>
+                </a>
+              </div>
+              <div class="dropdown-column border-left">
+                <a href="/jpg-to-png">JPG to PNG</a>
+                <a href="/png-to-jpg">PNG to JPG</a>
+                <a href="/png-to-webp">PNG to WebP</a>
+                <a href="/webp-to-jpg">WebP to JPG</a>
+                <a href="/heic-to-jpg">HEIC to JPG</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Watermark Dropdown -->
+        <div class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false" type="button">
+            Watermark
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dropdown-column">
+              <a href="/watermark-image">
+                <strong>Image Watermark</strong>
+                <span>Stamp custom logos onto images</span>
+              </a>
+              <a href="/watermark-video">
+                <strong>Video Watermark</strong>
+                <span>Overlay logo watermarks on video</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <a href="/blog" class="nav-link {% if 'blog' in seo_data.canonical %}active{% endif %}">Blog</a>
+      </nav>
+      <div class="header-actions">
+        <div class="theme-toggle-wrapper">
+          <button class="theme-toggle" id="themeToggleBtn" aria-label="Choose theme" title="Choose theme mode">
+            <svg id="themeIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <div class="theme-menu" id="themeMenu" role="menu" aria-label="Theme options">
+            <button class="theme-option" data-theme="system" type="button">System</button>
+            <button class="theme-option" data-theme="dark" type="button">Dark</button>
+            <button class="theme-option" data-theme="light" type="button">Light</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Above-The-Fold Leaderboard Ad (High RPM Placement) -->
+  <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-placeholder">Top Banner Ad Slot (728x90 / 970x90)</div>
+  </div>
+
+  <main class="main-container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Bottom Leaderboard Ad (End of Content Monetization) -->
+  <div class="ad-slot ad-leaderboard" style="margin-bottom: 30px;" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-placeholder">Bottom Banner Ad Slot (728x90)</div>
+  </div>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Image Tools</h4>
+          <ul>
+            <li><a href="/compress-image">Compress Image</a></li>
+            <li><a href="/resize-image">Resize Image</a></li>
+            <li><a href="/convert-image">Convert Image</a></li>
+            <li><a href="/watermark-image">Watermark Image</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Video Tools</h4>
+          <ul>
+            <li><a href="/compress-video">Compress Video</a></li>
+            <li><a href="/resize-video">Resize Video</a></li>
+            <li><a href="/convert-video">Convert Video</a></li>
+            <li><a href="/watermark-video">Watermark Video</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="/blog">Blog & Guides</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms of Use</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 jpgoptimiser.com. Built for clean bulk conversion and optimization workflows.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="cookieConsent" class="cookie-consent-banner">
+    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on jpgoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
+    <button id="acceptCookiesBtn" type="button">Accept</button>
+  </div>
+
+  <!-- Central Client-Side Controller -->
+  <script>
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeMenu = document.getElementById('themeMenu');
+    const themeOptions = Array.from(document.querySelectorAll('.theme-option'));
+    const themeIcon = document.getElementById('themeIcon');
+
+    const getSystemTheme = () => (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    const updateThemeIcon = (theme) => {
+      if (theme === 'dark') {
+        themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+      } else {
+        themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+      }
+    };
+
+    const applyTheme = (theme) => {
+      const resolvedTheme = theme === 'system' ? getSystemTheme() : theme;
+      document.documentElement.setAttribute('data-theme', resolvedTheme);
+      themeOptions.forEach((option) => option.classList.toggle('active', option.dataset.theme === theme));
+      try {
+        localStorage.setItem('jpgoptimiser-theme', theme);
+      } catch (e) {}
+      updateThemeIcon(resolvedTheme);
+    };
+
+    // Toggle menu
+    themeToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      themeMenu.classList.toggle('open');
+    });
+
+    document.addEventListener('click', () => {
+      themeMenu.classList.remove('open');
+    });
+
+    themeOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        applyTheme(option.dataset.theme);
+      });
+    });
+
+    // Initialize Theme
+    let savedTheme = 'dark';
+    try {
+      savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'dark';
+    } catch (e) {}
+    applyTheme(savedTheme);
+
+    // Mobile Hamburger Menu logic
+    const menuToggleBtn = document.getElementById('menuToggleBtn');
+    const headerNav = document.getElementById('headerNav');
+    if (menuToggleBtn && headerNav) {
+      menuToggleBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const expanded = menuToggleBtn.getAttribute('aria-expanded') === 'true';
+        menuToggleBtn.setAttribute('aria-expanded', !expanded);
+        headerNav.classList.toggle('open');
+      });
+      document.addEventListener('click', () => {
+        menuToggleBtn.setAttribute('aria-expanded', 'false');
+        headerNav.classList.remove('open');
+      });
+      headerNav.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    // Mobile/Tablet Dropdown click-toggle support
+    const dropdowns = Array.from(document.querySelectorAll('.nav-item.dropdown'));
+    dropdowns.forEach(dropdown => {
+      const toggle = dropdown.querySelector('.dropdown-toggle');
+      const menu = dropdown.querySelector('.dropdown-menu');
+      if (toggle && menu) {
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (window.innerWidth < 992) {
+            const isOpen = menu.classList.contains('open');
+            // Close other dropdowns
+            dropdowns.forEach(d => {
+              const m = d.querySelector('.dropdown-menu');
+              const t = d.querySelector('.dropdown-toggle');
+              if (m) m.classList.remove('open');
+              if (t) t.setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+              menu.classList.add('open');
+              toggle.setAttribute('aria-expanded', 'true');
+            }
+          }
+        });
+      }
+    });
+
+    document.addEventListener('click', () => {
+      dropdowns.forEach(d => {
+        const m = d.querySelector('.dropdown-menu');
+        const t = d.querySelector('.dropdown-toggle');
+        if (m) m.classList.remove('open');
+        if (t) t.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Cookie Banner
+    const cookieConsent = document.getElementById('cookieConsent');
+    const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
+    if (cookieConsent && acceptCookiesBtn) {
+      if (!localStorage.getItem('jpgoptimiser-cookies-accepted')) {
+        cookieConsent.style.display = 'flex';
+      }
+      acceptCookiesBtn.addEventListener('click', () => {
+        localStorage.setItem('jpgoptimiser-cookies-accepted', 'true');
+        cookieConsent.style.display = 'none';
+      });
+    }
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

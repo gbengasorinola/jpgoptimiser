@@ -9,7 +9,25 @@ from typing import Any, Iterable
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
+import json
+import re
+
+try:
+    from .seo_config import (
+        resolve_seo_data,
+        get_blog_post,
+        get_related_links,
+        BLOG_ARTICLES,
+    )
+except ImportError:
+    from seo_config import (
+        resolve_seo_data,
+        get_blog_post,
+        get_related_links,
+        BLOG_ARTICLES,
+    )
 
 try:  # pragma: no cover - import shim for direct execution
     from .banner_optimizer import OptimizationTask, process_optimization_batch
@@ -55,6 +73,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent / "templates"))
 
 FRONTEND_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "index.html"
 DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "index.html"
@@ -189,14 +209,8 @@ def _download_response(
 @app.get("/", include_in_schema=False)
 @app.get("/optimiser", include_in_schema=False)
 @app.get("/optimiser/", include_in_schema=False)
-async def frontend() -> Response:
-    frontend_index = _frontend_index_path()
-    if frontend_index is not None:
-        return FileResponse(frontend_index)
-    return Response(
-        content="JPG Optimiser frontend not found. Open jpgoptimiser/frontend/index.html directly.",
-        media_type="text/plain",
-    )
+async def frontend_root(request: Request) -> Response:
+    return await catch_all(request, "")
 
 
 @app.get("/health")
@@ -495,81 +509,285 @@ async def resize(request: Request) -> Response:
 
 @app.get("/converter", include_in_schema=False)
 @app.get("/converter/", include_in_schema=False)
-async def converter_frontend() -> Response:
-    CONVERTER_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "converter.html"
-    CONVERTER_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "converter" / "index.html"
+async def converter_legacy_redirect() -> Response:
+    return RedirectResponse(url="/convert-image", status_code=301)
 
-    if CONVERTER_DIST_INDEX.exists():
-        return FileResponse(CONVERTER_DIST_INDEX)
-    if CONVERTER_INDEX.exists():
-        return FileResponse(CONVERTER_INDEX)
-    return Response(
-        content="JPG Optimiser Converter frontend not found. Open jpgoptimiser/frontend/converter.html directly.",
-        media_type="text/plain",
-    )
+
+def _get_static_html_body(page_name: str) -> str:
+    """Extract page body html from legacy static files for migration."""
+    p = Path(__file__).resolve().parents[1] / "frontend" / f"{page_name}.html"
+    if p.exists():
+        try:
+            text = p.read_text(encoding="utf-8")
+            match = re.search(r'<article[^>]*>(.*?)</article>', text, re.DOTALL)
+            if match:
+                body = match.group(1)
+                # strip nested h1 since base/static templates render them
+                body = re.sub(r'<h1[^>]*>.*?</h1>', '', body, flags=re.IGNORECASE)
+                return body
+        except Exception:
+            pass
+    return f"<p>Details and information about {page_name} on jpgoptimiser.com.</p>"
 
 
 @app.get("/about", include_in_schema=False)
 @app.get("/about/", include_in_schema=False)
-async def about_frontend() -> Response:
-    ABOUT_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "about.html"
-    ABOUT_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "about" / "index.html"
-
-    if ABOUT_DIST_INDEX.exists():
-        return FileResponse(ABOUT_DIST_INDEX)
-    if ABOUT_INDEX.exists():
-        return FileResponse(ABOUT_INDEX)
-    return Response(
-        content="About page not found.",
-        media_type="text/plain",
+async def about_page(request: Request) -> Response:
+    seo_data = resolve_seo_data("about")
+    html_content = _get_static_html_body("about")
+    return templates.TemplateResponse(
+        request,
+        "static_page.html",
+        {
+            "title_header": "About Us",
+            "seo_data": seo_data,
+            "page_name": "about",
+            "html_content": html_content,
+        },
     )
 
 
 @app.get("/privacy", include_in_schema=False)
 @app.get("/privacy/", include_in_schema=False)
-async def privacy_frontend() -> Response:
-    PRIVACY_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "privacy.html"
-    PRIVACY_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "privacy" / "index.html"
-
-    if PRIVACY_DIST_INDEX.exists():
-        return FileResponse(PRIVACY_DIST_INDEX)
-    if PRIVACY_INDEX.exists():
-        return FileResponse(PRIVACY_INDEX)
-    return Response(
-        content="Privacy page not found.",
-        media_type="text/plain",
+async def privacy_page(request: Request) -> Response:
+    seo_data = resolve_seo_data("privacy")
+    html_content = _get_static_html_body("privacy")
+    return templates.TemplateResponse(
+        request,
+        "static_page.html",
+        {
+            "title_header": "Privacy Policy",
+            "seo_data": seo_data,
+            "page_name": "privacy",
+            "html_content": html_content,
+        },
     )
 
 
 @app.get("/terms", include_in_schema=False)
 @app.get("/terms/", include_in_schema=False)
-async def terms_frontend() -> Response:
-    TERMS_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "terms.html"
-    TERMS_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "terms" / "index.html"
-
-    if TERMS_DIST_INDEX.exists():
-        return FileResponse(TERMS_DIST_INDEX)
-    if TERMS_INDEX.exists():
-        return FileResponse(TERMS_INDEX)
-    return Response(
-        content="Terms page not found.",
-        media_type="text/plain",
+async def terms_page(request: Request) -> Response:
+    seo_data = resolve_seo_data("terms")
+    html_content = _get_static_html_body("terms")
+    return templates.TemplateResponse(
+        request,
+        "static_page.html",
+        {
+            "title_header": "Terms of Use",
+            "seo_data": seo_data,
+            "page_name": "terms",
+            "html_content": html_content,
+        },
     )
 
 
 @app.get("/contact", include_in_schema=False)
 @app.get("/contact/", include_in_schema=False)
-async def contact_frontend() -> Response:
-    CONTACT_INDEX = Path(__file__).resolve().parents[1] / "frontend" / "contact.html"
-    CONTACT_DIST_INDEX = Path(__file__).resolve().parents[1] / "dist" / "contact" / "index.html"
+async def contact_page(request: Request) -> Response:
+    seo_data = resolve_seo_data("contact")
+    return templates.TemplateResponse(
+        request,
+        "static_page.html",
+        {
+            "title_header": "Contact Us",
+            "subtitle": "Have questions or feedback? Drop us a line below and we'll get back to you shortly.",
+            "seo_data": seo_data,
+            "page_name": "contact",
+        },
+    )
 
-    if CONTACT_DIST_INDEX.exists():
-        return FileResponse(CONTACT_DIST_INDEX)
-    if CONTACT_INDEX.exists():
-        return FileResponse(CONTACT_INDEX)
-    return Response(
-        content="Contact page not found.",
-        media_type="text/plain",
+
+@app.get("/robots.txt", include_in_schema=False)
+async def robots_txt() -> Response:
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://jpgoptimiser.com/sitemap.xml\n"
+    )
+    return Response(content=content, media_type="text/plain")
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap_xml() -> Response:
+    from .seo_config import get_all_paths
+    domain = "https://jpgoptimiser.com"
+    urls = [f"{domain}/"] + [f"{domain}/{p}" for p in get_all_paths()]
+    
+    xml_items = []
+    for url in urls:
+        xml_items.append(
+            f"  <url>\n"
+            f"    <loc>{url}</loc>\n"
+            f"    <changefreq>weekly</changefreq>\n"
+            f"    <priority>0.8</priority>\n"
+            f"  </url>"
+        )
+        
+    xml_content = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "\n".join(xml_items) +
+        '\n</urlset>'
+    )
+    return Response(content=xml_content, media_type="application/xml")
+
+
+@app.get("/blog", include_in_schema=False)
+@app.get("/blog/", include_in_schema=False)
+async def blog_list(request: Request) -> Response:
+    seo_data = {
+        "title": "Blog — Image Optimization Insights | jpgoptimiser.com",
+        "meta_description": "Read expert articles on web performance, next-gen formats (WebP vs AVIF), and social image quality optimization.",
+        "canonical": "/blog",
+        "active_tab": "blog",
+    }
+    return templates.TemplateResponse(
+        request,
+        "blog_list.html",
+        {"articles": BLOG_ARTICLES, "seo_data": seo_data},
+    )
+
+
+@app.get("/blog/{slug}", include_in_schema=False)
+async def blog_post(request: Request, slug: str) -> Response:
+    post = get_blog_post(slug)
+    if not post:
+        return Response(content="Article not found.", status_code=404, media_type="text/plain")
+        
+    post = post.copy()
+    content_html = post["content"]
+    paragraphs = [p.strip() for p in content_html.split("</p>") if p.strip()]
+    mid = len(paragraphs) // 2
+    if mid > 0:
+        ad_code = (
+            '\n<div class="ad-slot ad-in-content" style="margin: 28px auto;" aria-label="Advertisement">\n'
+            '  <span class="ad-label">Advertisement</span>\n'
+            '  <div class="ad-placeholder">In-Article Responsive Ad (728x90 / 300x250)</div>\n'
+            '</div>\n'
+        )
+        paragraphs.insert(mid, ad_code)
+        content_parts = []
+        for i, p in enumerate(paragraphs):
+            if p.strip() == ad_code.strip():
+                content_parts.append(p)
+            else:
+                content_parts.append(p + "</p>")
+        post["content"] = "".join(content_parts)
+
+    seo_data = {
+        "title": f"{post['title']} | jpgoptimiser.com Blog",
+        "meta_description": post["summary"],
+        "canonical": f"/blog/{slug}",
+        "active_tab": "blog",
+    }
+    
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post["title"],
+        "description": post["summary"],
+        "datePublished": "2026-07-10",
+        "author": {
+            "@type": "Organization",
+            "name": "jpgoptimiser.com",
+        },
+    }
+    
+    return templates.TemplateResponse(
+        request,
+        "blog_post.html",
+        {
+            "post": post,
+            "seo_data": seo_data,
+            "schema_json": json.dumps(schema),
+        },
+    )
+
+
+@app.get("/{path:path}", include_in_schema=False)
+async def catch_all(request: Request, path: str) -> Response:
+    # Safely bypass post API routes that fast-api usually resolves first
+    if path in {"health", "process", "optimize", "resize", "convert", "contact"}:
+        return Response(status_code=404)
+        
+    seo_data = resolve_seo_data(path)
+    if not seo_data:
+        # Check if file exists in frontend as static asset
+        frontend_file = Path(__file__).resolve().parents[1] / "frontend" / path
+        if frontend_file.exists() and frontend_file.is_file():
+            return FileResponse(frontend_file)
+        return Response(content="Page not found.", status_code=404, media_type="text/plain")
+
+    # Build schema structures
+    breadcrumbs = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://jpgoptimiser.com/",
+            }
+        ],
+    }
+    if path:
+        breadcrumbs["itemListElement"].append(
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": path.replace("-", " ").title(),
+                "item": f"https://jpgoptimiser.com/{path}",
+            }
+        )
+
+    software_app = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": seo_data["title"],
+        "operatingSystem": "All",
+        "applicationCategory": "ImageApplication",
+        "offers": {
+            "@type": "Offer",
+            "price": "0.00",
+            "priceCurrency": "USD",
+        },
+    }
+
+    faq_schema = None
+    if seo_data.get("faqs"):
+        faq_schema = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [],
+        }
+        for faq in seo_data["faqs"]:
+            faq_schema["mainEntity"].append(
+                {
+                    "@type": "Question",
+                    "name": faq["q"],
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": faq["a"],
+                    },
+                }
+            )
+
+    schema_list = [breadcrumbs, software_app]
+    if faq_schema:
+        schema_list.append(faq_schema)
+
+    related_links = get_related_links(path)
+
+    return templates.TemplateResponse(
+        request,
+        "tool.html",
+        {
+            "seo_data": seo_data,
+            "related_links": related_links,
+            "schema_json": json.dumps(schema_list),
+        },
     )
 
 
