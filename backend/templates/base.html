@@ -5,7 +5,7 @@
   <script>
     (function() {
       try {
-        const savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'dark';
+        const savedTheme = localStorage.getItem('globeoptimiser-theme') || 'dark';
         const resolvedTheme = savedTheme === 'system' 
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : savedTheme;
@@ -14,18 +14,18 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="jpgoptimiser-api-base" content="">
+  <meta name="globeoptimiser-api-base" content="">
   <title>{{ seo_data.title }}</title>
   <meta name="description" content="{{ seo_data.meta_description }}">
   
   <!-- Canonical and Social Metadata -->
   {% if seo_data.canonical %}
-  <link rel="canonical" href="https://jpgoptimiser.com{{ seo_data.canonical }}">
+  <link rel="canonical" href="https://globeoptimiser.com{{ seo_data.canonical }}">
   {% endif %}
   <meta property="og:title" content="{{ seo_data.title }}">
   <meta property="og:description" content="{{ seo_data.meta_description }}">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://jpgoptimiser.com{{ seo_data.canonical or '' }}">
+  <meta property="og:url" content="https://globeoptimiser.com{{ seo_data.canonical or '' }}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ seo_data.title }}">
   <meta name="twitter:description" content="{{ seo_data.meta_description }}">
@@ -150,7 +150,7 @@
             <polyline points="21 15 16 10 5 21"></polyline>
           </svg>
         </div>
-        <div class="logo-text">jpg<span>optimiser.com</span></div>
+        <div class="logo-text">globe<span>optimiser.com</span></div>
       </a>
       <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -160,6 +160,34 @@
         </svg>
       </button>
       <nav class="header-nav" id="headerNav">
+        <!-- Video Tools Dropdown -->
+        <div class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" aria-expanded="false" type="button">
+            Video Tools
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dropdown-column">
+              <a href="/compress-video">
+                <strong>Video Compressor</strong>
+                <span>Compress MP4, WebM & MOV file sizes</span>
+              </a>
+              <a href="/resize-video">
+                <strong>Video Resizer</strong>
+                <span>Scale resolution & canvas ratios</span>
+              </a>
+              <a href="/convert-video">
+                <strong>Video Converter</strong>
+                <span>Transcode MP4, WebM & GIF</span>
+              </a>
+              <a href="/watermark-video">
+                <strong>Video Watermark</strong>
+                <span>Stamp custom logos on video</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <!-- Resize Dropdown -->
         <div class="nav-item dropdown">
           <button class="nav-link dropdown-toggle" aria-expanded="false" type="button">
@@ -339,13 +367,13 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 jpgoptimiser.com. Built for clean bulk conversion and optimization workflows.</p>
+        <p>&copy; 2026 globeoptimiser.com. Built for clean bulk conversion and optimization workflows.</p>
       </div>
     </div>
   </footer>
 
   <div id="cookieConsent" class="cookie-consent-banner">
-    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on jpgoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
+    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on globeoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
     <button id="acceptCookiesBtn" type="button">Accept</button>
   </div>
 
@@ -371,7 +399,7 @@
       document.documentElement.setAttribute('data-theme', resolvedTheme);
       themeOptions.forEach((option) => option.classList.toggle('active', option.dataset.theme === theme));
       try {
-        localStorage.setItem('jpgoptimiser-theme', theme);
+        localStorage.setItem('globeoptimiser-theme', theme);
       } catch (e) {}
       updateThemeIcon(resolvedTheme);
     };
@@ -395,7 +423,7 @@
     // Initialize Theme
     let savedTheme = 'dark';
     try {
-      savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'dark';
+      savedTheme = localStorage.getItem('globeoptimiser-theme') || 'dark';
     } catch (e) {}
     applyTheme(savedTheme);
 
@@ -457,11 +485,11 @@
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
     if (cookieConsent && acceptCookiesBtn) {
-      if (!localStorage.getItem('jpgoptimiser-cookies-accepted')) {
+      if (!localStorage.getItem('globeoptimiser-cookies-accepted')) {
         cookieConsent.style.display = 'flex';
       }
       acceptCookiesBtn.addEventListener('click', () => {
-        localStorage.setItem('jpgoptimiser-cookies-accepted', 'true');
+        localStorage.setItem('globeoptimiser-cookies-accepted', 'true');
         cookieConsent.style.display = 'none';
       });
     }

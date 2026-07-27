@@ -119,7 +119,7 @@ def _error_zip_response(
     messages: Iterable[str],
     http_status: int,
     *,
-    filename: str = "jpgoptimiser_processed_errors.zip",
+    filename: str = "globeoptimiser_processed_errors.zip",
 ) -> Response:
     zip_bytes = build_zip_bytes([], messages)
     headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
@@ -228,7 +228,7 @@ async def process(request: Request) -> Response:
         return _error_zip_response(
             ["Missing required field: placement_mode."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_processed_errors.zip",
+            filename="globeoptimiser_processed_errors.zip",
         )
 
     placement_mode = _normalize_mode(placement_mode_raw)
@@ -239,7 +239,7 @@ async def process(request: Request) -> Response:
                 "Expected one of: smart, top-left, top-right.",
             ],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_processed_errors.zip",
+            filename="globeoptimiser_processed_errors.zip",
         )
 
     banner_uploads = _collect_uploads(
@@ -250,7 +250,7 @@ async def process(request: Request) -> Response:
         return _error_zip_response(
             ["No banner images were uploaded."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_processed_errors.zip",
+            filename="globeoptimiser_processed_errors.zip",
         )
 
     logo_uploads = _collect_uploads(form, ("logo_image", "logo", "logo_file"))
@@ -258,7 +258,7 @@ async def process(request: Request) -> Response:
         return _error_zip_response(
             ["No logo image was uploaded."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_processed_errors.zip",
+            filename="globeoptimiser_processed_errors.zip",
         )
 
     logo_upload = logo_uploads[0]
@@ -267,7 +267,7 @@ async def process(request: Request) -> Response:
         return _error_zip_response(
             ["The uploaded logo image is empty."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_processed_errors.zip",
+            filename="globeoptimiser_processed_errors.zip",
         )
 
     try:
@@ -276,7 +276,7 @@ async def process(request: Request) -> Response:
         return _error_zip_response(
             ["The uploaded logo image is corrupted or unsupported."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_processed_errors.zip",
+            filename="globeoptimiser_processed_errors.zip",
         )
 
     processed_files = []
@@ -313,7 +313,7 @@ async def process(request: Request) -> Response:
         return _error_zip_response(
             ["No valid banner images or videos found in the upload."] + errors,
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_processed_errors.zip",
+            filename="globeoptimiser_processed_errors.zip",
         )
 
     for chunk_index, upload_chunk in enumerate(_chunked(banner_files, chunk_size)):
@@ -343,8 +343,8 @@ async def process(request: Request) -> Response:
         processed_files,
         errors,
         empty_message="No banners could be processed.",
-        zip_filename="jpgoptimiser_processed_banners.zip",
-        error_filename="jpgoptimiser_processed_errors.zip",
+        zip_filename="globeoptimiser_processed_banners.zip",
+        error_filename="globeoptimiser_processed_errors.zip",
         custom_name=custom_name,
         append_custom_name=True,
     )
@@ -376,7 +376,7 @@ async def optimize(request: Request) -> Response:
         return _error_zip_response(
             ["No banner images were uploaded."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_optimized_errors.zip",
+            filename="globeoptimiser_optimized_errors.zip",
         )
 
     processed_files = []
@@ -412,8 +412,8 @@ async def optimize(request: Request) -> Response:
         processed_files,
         errors,
         empty_message="No banners could be optimized.",
-        zip_filename="jpgoptimiser_optimized_banners.zip",
-        error_filename="jpgoptimiser_optimized_errors.zip",
+        zip_filename="globeoptimiser_optimized_banners.zip",
+        error_filename="globeoptimiser_optimized_errors.zip",
         custom_name=custom_name,
     )
 
@@ -431,7 +431,7 @@ async def resize(request: Request) -> Response:
                 "Expected one of: fit_expand, blur_expand, solid_background, dominant_color_background.",
             ],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_resized_errors.zip",
+            filename="globeoptimiser_resized_errors.zip",
         )
 
     try:
@@ -444,7 +444,7 @@ async def resize(request: Request) -> Response:
         return _error_zip_response(
             [str(exc)],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_resized_errors.zip",
+            filename="globeoptimiser_resized_errors.zip",
         )
 
     try:
@@ -453,7 +453,7 @@ async def resize(request: Request) -> Response:
         return _error_zip_response(
             ["blur_radius must be a number."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_resized_errors.zip",
+            filename="globeoptimiser_resized_errors.zip",
         )
 
     uploads = _collect_uploads(form, ("images", "image", "files", "creative", "creatives"))
@@ -461,7 +461,7 @@ async def resize(request: Request) -> Response:
         return _error_zip_response(
             ["No creative images were uploaded."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_resized_errors.zip",
+            filename="globeoptimiser_resized_errors.zip",
         )
 
     background_color = _first_text(form, ("background_color", "background", "color"))
@@ -501,8 +501,8 @@ async def resize(request: Request) -> Response:
         processed_files,
         errors,
         empty_message="No creatives could be adapted.",
-        zip_filename="jpgoptimiser_resized_images.zip",
-        error_filename="jpgoptimiser_resized_errors.zip",
+        zip_filename="globeoptimiser_resized_images.zip",
+        error_filename="globeoptimiser_resized_errors.zip",
         custom_name=custom_name,
     )
 
@@ -527,7 +527,7 @@ def _get_static_html_body(page_name: str) -> str:
                 return body
         except Exception:
             pass
-    return f"<p>Details and information about {page_name} on jpgoptimiser.com.</p>"
+    return f"<p>Details and information about {page_name} on globeoptimiser.com.</p>"
 
 
 @app.get("/about", include_in_schema=False)
@@ -603,7 +603,7 @@ async def robots_txt() -> Response:
         "User-agent: *\n"
         "Allow: /\n"
         "\n"
-        "Sitemap: https://jpgoptimiser.com/sitemap.xml\n"
+        "Sitemap: https://globeoptimiser.com/sitemap.xml\n"
     )
     return Response(content=content, media_type="text/plain")
 
@@ -611,7 +611,7 @@ async def robots_txt() -> Response:
 @app.get("/sitemap.xml", include_in_schema=False)
 async def sitemap_xml() -> Response:
     from .seo_config import get_all_paths
-    domain = "https://jpgoptimiser.com"
+    domain = "https://globeoptimiser.com"
     urls = [f"{domain}/"] + [f"{domain}/{p}" for p in get_all_paths()]
     
     xml_items = []
@@ -637,7 +637,7 @@ async def sitemap_xml() -> Response:
 @app.get("/blog/", include_in_schema=False)
 async def blog_list(request: Request) -> Response:
     seo_data = {
-        "title": "Blog — Image Optimization Insights | jpgoptimiser.com",
+        "title": "Blog — Image Optimization Insights | globeoptimiser.com",
         "meta_description": "Read expert articles on web performance, next-gen formats (WebP vs AVIF), and social image quality optimization.",
         "canonical": "/blog",
         "active_tab": "blog",
@@ -676,7 +676,7 @@ async def blog_post(request: Request, slug: str) -> Response:
         post["content"] = "".join(content_parts)
 
     seo_data = {
-        "title": f"{post['title']} | jpgoptimiser.com Blog",
+        "title": f"{post['title']} | globeoptimiser.com Blog",
         "meta_description": post["summary"],
         "canonical": f"/blog/{slug}",
         "active_tab": "blog",
@@ -690,7 +690,7 @@ async def blog_post(request: Request, slug: str) -> Response:
         "datePublished": "2026-07-10",
         "author": {
             "@type": "Organization",
-            "name": "jpgoptimiser.com",
+            "name": "globeoptimiser.com",
         },
     }
     
@@ -728,7 +728,7 @@ async def catch_all(request: Request, path: str) -> Response:
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://jpgoptimiser.com/",
+                "item": "https://globeoptimiser.com/",
             }
         ],
     }
@@ -738,7 +738,7 @@ async def catch_all(request: Request, path: str) -> Response:
                 "@type": "ListItem",
                 "position": 2,
                 "name": path.replace("-", " ").title(),
-                "item": f"https://jpgoptimiser.com/{path}",
+                "item": f"https://globeoptimiser.com/{path}",
             }
         )
 
@@ -820,7 +820,7 @@ async def convert(request: Request) -> Response:
         return _error_zip_response(
             ["Missing required field: target_format."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_converter_errors.zip",
+            filename="globeoptimiser_converter_errors.zip",
         )
 
     target_format = target_format.strip().lower()
@@ -833,7 +833,7 @@ async def convert(request: Request) -> Response:
         return _error_zip_response(
             ["No files were uploaded for conversion."],
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            filename="jpgoptimiser_converter_errors.zip",
+            filename="globeoptimiser_converter_errors.zip",
         )
 
     processed_files = []
@@ -866,8 +866,8 @@ async def convert(request: Request) -> Response:
         processed_files,
         errors,
         empty_message="No files could be converted.",
-        zip_filename="jpgoptimiser_converted_files.zip",
-        error_filename="jpgoptimiser_converter_errors.zip",
+        zip_filename="globeoptimiser_converted_files.zip",
+        error_filename="globeoptimiser_converter_errors.zip",
         custom_name=custom_name,
     )
 

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="globeoptimiser-api-base" content="">
+  <title>Free Online Video Compressor — globeoptimiser.com</title>
+  <meta name="description" content="Reduce video file size online in bulk. Compress MP4, WebM, and MOV videos to make them smaller without losing visual quality.">
+  <link rel="canonical" href="https://globeoptimiser.com/compress-video">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #8b5cf6;
+      --radius: 16px;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --border: rgba(0, 0, 0, 0.08);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #7c3aed;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    
+    header {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-container {
+      max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-container { display: flex; align-items: center; gap: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.25rem; }
+    .logo-icon { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 6px; borderRadius: 10px; display: flex; }
+    .logo-text span { color: var(--primary); }
+    
+    nav.header-nav { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-link { color: var(--text); font-weight: 500; font-size: 0.95rem; }
+    .nav-item.dropdown { position: relative; }
+    .dropdown-toggle { background: none; border: none; color: var(--text); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.95rem; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 0;
+      background: var(--card-bg); backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 0.75rem; min-width: 260px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+      margin-top: 0.5rem; z-index: 110;
+    }
+    .nav-item.dropdown:hover .dropdown-menu, .dropdown-menu.open { display: block; }
+    .dropdown-column a { display: block; padding: 0.5rem 0.75rem; border-radius: 8px; color: var(--text); }
+    .dropdown-column a:hover { background: rgba(59, 130, 246, 0.1); text-decoration: none; }
+    .dropdown-column strong { display: block; font-size: 0.9rem; }
+    .dropdown-column span { font-size: 0.75rem; color: var(--text-muted); }
+
+    .main-container { max-width: 1000px; margin: 2.5rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
+    .tool-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2.5rem; backdrop-filter: blur(12px);
+      margin-bottom: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h1 { font-family: 'Outfit', sans-serif; font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; }
+    h1 mark { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { color: var(--text-muted); margin-bottom: 2rem; font-size: 1.05rem; }
+
+    .dropzone {
+      border: 2px dashed var(--primary); border-radius: 14px;
+      padding: 3rem 2rem; text-align: center; cursor: pointer;
+      background: rgba(59, 130, 246, 0.03); transition: all 0.2s ease;
+    }
+    .dropzone:hover { background: rgba(59, 130, 246, 0.08); border-color: var(--primary-hover); }
+    .dropzone-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    label { font-weight: 600; font-size: 0.9rem; }
+    input[type="number"], select {
+      background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border);
+      color: var(--text); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.95rem; width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; border: none; padding: 0.9rem 2rem; border-radius: 10px;
+      font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+
+    .benefits-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2.5rem; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+    .benefit-item { display: flex; gap: 1rem; }
+    .benefit-icon { font-size: 1.5rem; }
+
+    footer { background: var(--card-bg); border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+    footer a { color: var(--text-muted); margin: 0 0.5rem; }
+
+    .cookie-banner {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; max-width: 400px;
+      background: var(--card-bg); border: 1px solid var(--border); backdrop-filter: blur(16px);
+      padding: 1.25rem; border-radius: 12px; display: none; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .cookie-banner button { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; float: right; margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a href="/" class="logo-container">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        </div>
+        <div class="logo-text">globe<span>optimiser.com</span></div>
+      </a>
+      <nav class="header-nav">
+        <div class="nav-item dropdown">
+          <button class="dropdown-toggle" type="button">Video Tools ▼</button>
+          <div class="dropdown-menu">
+            <div class="dropdown-column">
+              <a href="/compress-video"><strong>Video Compressor</strong><span>Compress MP4 & WebM file sizes</span></a>
+              <a href="/resize-video"><strong>Video Resizer</strong><span>Scale resolution & canvas</span></a>
+              <a href="/convert-video"><strong>Video Converter</strong><span>Convert MP4, WebM & GIF</span></a>
+              <a href="/watermark-video"><strong>Video Watermark</strong><span>Stamp logos on videos</span></a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item dropdown">
+          <button class="dropdown-toggle" type="button">Image Tools ▼</button>
+          <div class="dropdown-menu">
+            <div class="dropdown-column">
+              <a href="/compress-image"><strong>Image Compressor</strong><span>Shrink image KB limits</span></a>
+              <a href="/resize-image"><strong>Image Resizer</strong><span>Bulk resize banner dimensions</span></a>
+              <a href="/convert-image"><strong>Image Converter</strong><span>Convert PNG, JPG, WebP</span></a>
+              <a href="/watermark-image"><strong>Image Watermark</strong><span>Overlay logo watermarks</span></a>
+            </div>
+          </div>
+        </div>
+        <a href="/blog" class="nav-link">Blog</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <section class="tool-card">
+      <h1>Free Online <mark>Video Compressor</mark></h1>
+      <p class="subtitle">Compress MP4, WebM, and MOV video files online. Reduce file size for fast web loading, emails, and landing page banners.</p>
+      
+      <form id="videoCompressForm" enctype="multipart/form-data">
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">🎬</div>
+          <h3>Select or Drop Video Files Here</h3>
+          <p class="subtitle" style="margin-bottom: 0;">Supports MP4, WebM, MOV, AVI (Up to 50MB batch)</p>
+          <input type="file" id="videoFileInput" name="banners" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo" multiple style="display: none;">
+        </div>
+
+        <div id="fileListDisplay" style="margin-top: 1rem; color: var(--primary); font-weight: 600;"></div>
+
+        <div class="controls-grid">
+          <div class="control-group">
+            <label for="maxSizeInput">Target Max File Size (KB or MB optional)</label>
+            <input type="number" id="maxSizeInput" name="max_size_kb" placeholder="e.g. 5000 (5MB)">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="processBtn">Compress Videos Now</button>
+      </form>
+      <div id="statusMessage" style="margin-top: 1rem; font-weight: 600;"></div>
+    </section>
+
+    <section class="benefits-card">
+      <h2>Why Compress Web Videos?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon">⚡</div>
+          <div>
+            <strong>Boost Core Web Vitals</strong>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Smaller video payloads improve Largest Contentful Paint (LCP) and keep visitors engaged.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">📱</div>
+          <div>
+            <strong>Mobile Optimization</strong>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Ensure videos play smoothly on mobile cellular connections without buffering.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🔒</div>
+          <div>
+            <strong>100% Private & Transient</strong>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Files process on-the-fly and are never permanently stored on servers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 globeoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
+  </footer>
+
+  <div id="cookieConsent" class="cookie-banner">
+    <p>We use cookies to improve your experience on globeoptimiser.com.</p>
+    <button id="acceptCookiesBtn" type="button">Accept</button>
+  </div>
+
+  <script>
+    const apiBaseMeta = document.querySelector('meta[name="globeoptimiser-api-base"]');
+    const resolvedApiBase = apiBaseMeta ? apiBaseMeta.content.trim().replace(/\/$/, '') : window.location.origin;
+
+    const dropzone = document.getElementById('dropzone');
+    const videoFileInput = document.getElementById('videoFileInput');
+    const fileListDisplay = document.getElementById('fileListDisplay');
+    const form = document.getElementById('videoCompressForm');
+    const statusMessage = document.getElementById('statusMessage');
+
+    dropzone.addEventListener('click', () => videoFileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.background = 'rgba(59, 130, 246, 0.15)'; });
+    dropzone.addEventListener('dragleave', () => dropzone.style.background = 'rgba(59, 130, 246, 0.03)');
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.style.background = 'rgba(59, 130, 246, 0.03)';
+      if (e.dataTransfer.files.length) {
+        videoFileInput.files = e.dataTransfer.files;
+        updateFileList();
+      }
+    });
+
+    videoFileInput.addEventListener('change', updateFileList);
+
+    function updateFileList() {
+      const files = Array.from(videoFileInput.files);
+      fileListDisplay.textContent = files.length ? `Selected ${files.length} file(s): ` + files.map(f => f.name).join(', ') : '';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!videoFileInput.files.length) {
+        statusMessage.style.color = '#ef4444';
+        statusMessage.textContent = 'Please select at least one video file.';
+        return;
+      }
+
+      statusMessage.style.color = 'var(--primary)';
+      statusMessage.textContent = 'Processing & compressing video(s)... Please wait.';
+
+      const formData = new FormData(form);
+      try {
+        const response = await fetch(`${resolvedApiBase}/optimize`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error('Compression failed.');
+
+        const blob = await response.blob();
+        const disposition = response.headers.get('content-disposition') || '';
+        const filenameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+        const filename = filenameMatch ? filenameMatch[1].replace(/['"]/g, '') : 'globeoptimiser_compressed_video.mp4';
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        statusMessage.style.color = '#22c55e';
+        statusMessage.textContent = 'Video compression complete! Download started.';
+      } catch (err) {
+        statusMessage.style.color = '#ef4444';
+        statusMessage.textContent = 'Error during video compression: ' + err.message;
+      }
+    });
+
+    const cookieConsent = document.getElementById('cookieConsent');
+    const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
+    if (!localStorage.getItem('globeoptimiser-cookies-accepted')) cookieConsent.style.display = 'block';
+    acceptCookiesBtn.addEventListener('click', () => {
+      localStorage.setItem('globeoptimiser-cookies-accepted', 'true');
+      cookieConsent.style.display = 'none';
+    });
+  </script>
+</body>
+</html>

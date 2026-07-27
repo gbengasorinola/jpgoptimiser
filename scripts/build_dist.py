@@ -11,6 +11,10 @@ SOURCE_ABOUT = PROJECT_ROOT / "frontend" / "about.html"
 SOURCE_PRIVACY = PROJECT_ROOT / "frontend" / "privacy.html"
 SOURCE_TERMS = PROJECT_ROOT / "frontend" / "terms.html"
 SOURCE_CONTACT = PROJECT_ROOT / "frontend" / "contact.html"
+SOURCE_COMPRESS_VIDEO = PROJECT_ROOT / "frontend" / "compress-video.html"
+SOURCE_RESIZE_VIDEO = PROJECT_ROOT / "frontend" / "resize-video.html"
+SOURCE_CONVERT_VIDEO = PROJECT_ROOT / "frontend" / "convert-video.html"
+SOURCE_WATERMARK_VIDEO = PROJECT_ROOT / "frontend" / "watermark-video.html"
 
 DIST_DIR = PROJECT_ROOT / "dist"
 DIST_INDEX = DIST_DIR / "index.html"
@@ -27,6 +31,15 @@ TERMS_INDEX = TERMS_DIR / "index.html"
 CONTACT_DIR = DIST_DIR / "contact"
 CONTACT_INDEX = CONTACT_DIR / "index.html"
 
+COMPRESS_VIDEO_DIR = DIST_DIR / "compress-video"
+COMPRESS_VIDEO_INDEX = COMPRESS_VIDEO_DIR / "index.html"
+RESIZE_VIDEO_DIR = DIST_DIR / "resize-video"
+RESIZE_VIDEO_INDEX = RESIZE_VIDEO_DIR / "index.html"
+CONVERT_VIDEO_DIR = DIST_DIR / "convert-video"
+CONVERT_VIDEO_INDEX = CONVERT_VIDEO_DIR / "index.html"
+WATERMARK_VIDEO_DIR = DIST_DIR / "watermark-video"
+WATERMARK_VIDEO_INDEX = WATERMARK_VIDEO_DIR / "index.html"
+
 
 def main() -> None:
     DIST_DIR.mkdir(parents=True, exist_ok=True)
@@ -36,6 +49,10 @@ def main() -> None:
     PRIVACY_DIR.mkdir(parents=True, exist_ok=True)
     TERMS_DIR.mkdir(parents=True, exist_ok=True)
     CONTACT_DIR.mkdir(parents=True, exist_ok=True)
+    COMPRESS_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
+    RESIZE_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
+    CONVERT_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
+    WATERMARK_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
     
     shutil.copy2(SOURCE_INDEX, DIST_INDEX)
     shutil.copy2(SOURCE_INDEX, OPTIMISER_INDEX)
@@ -45,6 +62,15 @@ def main() -> None:
     shutil.copy2(SOURCE_TERMS, TERMS_INDEX)
     shutil.copy2(SOURCE_CONTACT, CONTACT_INDEX)
     
+    if SOURCE_COMPRESS_VIDEO.exists():
+        shutil.copy2(SOURCE_COMPRESS_VIDEO, COMPRESS_VIDEO_INDEX)
+    if SOURCE_RESIZE_VIDEO.exists():
+        shutil.copy2(SOURCE_RESIZE_VIDEO, RESIZE_VIDEO_INDEX)
+    if SOURCE_CONVERT_VIDEO.exists():
+        shutil.copy2(SOURCE_CONVERT_VIDEO, CONVERT_VIDEO_INDEX)
+    if SOURCE_WATERMARK_VIDEO.exists():
+        shutil.copy2(SOURCE_WATERMARK_VIDEO, WATERMARK_VIDEO_INDEX)
+    
     print(f"Built {DIST_INDEX}")
     print(f"Built {OPTIMISER_INDEX}")
     print(f"Built {CONVERTER_INDEX}")
@@ -52,6 +78,10 @@ def main() -> None:
     print(f"Built {PRIVACY_INDEX}")
     print(f"Built {TERMS_INDEX}")
     print(f"Built {CONTACT_INDEX}")
+    print(f"Built {COMPRESS_VIDEO_INDEX}")
+    print(f"Built {RESIZE_VIDEO_INDEX}")
+    print(f"Built {CONVERT_VIDEO_INDEX}")
+    print(f"Built {WATERMARK_VIDEO_INDEX}")
 
 
 if __name__ == "__main__":

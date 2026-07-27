@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="jpgoptimiser-api-base" content="">
-  <title>jpgoptimiser.com - File Converter</title>
+  <meta name="globeoptimiser-api-base" content="">
+  <title>globeoptimiser.com - File Converter</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -1038,7 +1038,7 @@
             <polyline points="21 15 16 10 5 21"></polyline>
           </svg>
         </div>
-        <div class="logo-text">jpg<span>optimiser.com</span></div>
+        <div class="logo-text">globe<span>optimiser.com</span></div>
       </a>
       <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -1050,6 +1050,15 @@
       <nav class="header-nav" id="headerNav">
         <a href="/" class="nav-link">Optimiser</a>
         <a href="/converter" class="nav-link active">Converter</a>
+        <div class="nav-item dropdown" style="position: relative; display: inline-block;">
+          <a href="/compress-video" class="nav-link">Video Tools ▼</a>
+          <div class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; background: var(--card-bg, #161e31); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.75rem; min-width: 240px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 100;">
+            <a href="/compress-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Compressor</strong></a>
+            <a href="/resize-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Resizer</strong></a>
+            <a href="/convert-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Converter</strong></a>
+            <a href="/watermark-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Watermark</strong></a>
+          </div>
+        </div>
       </nav>
       <div class="header-actions">
         <div class="theme-toggle-wrapper">
@@ -1180,28 +1189,28 @@
           </div>
         </section>
 
-        <section class="benefits-card" aria-label="Benefits of using jpgoptimiser">
-          <h3>Why use jpgoptimiser?</h3>
+        <section class="benefits-card" aria-label="Benefits of using globeoptimiser">
+          <h3>Why use globeoptimiser?</h3>
           <div class="benefits-grid">
             <article class="benefit-card">
               <div class="benefit-icon">⚡</div>
-              <strong>PNG to WebP Converter</strong>
-              <p>Convert images instantly using the <strong>jpgoptimiser.com</strong> <strong>PNG to WebP converter</strong>. Converting to next-generation image types dramatically increases page load speeds and search rankings.</p>
+              <strong>Online Image Converter</strong>
+              <p>Convert images instantly using the <strong>globeoptimiser.com</strong> <strong>PNG to WebP converter</strong>. Converting to next-generation image types dramatically increases page load speeds and search rankings.</p>
             </article>
             <article class="benefit-card">
               <div class="benefit-icon">🧰</div>
-              <strong>Bulk Image Resizer & Converter</strong>
-              <p>With <strong>jpgoptimiser.com</strong>, you get a unified <strong>bulk image resizer</strong> and media converter. Swap formats between PNG, JPG, BMP, TIFF, GIF, and short MP4/WebM videos easily.</p>
+              <strong>Multi-Format Converter</strong>
+              <p>With <strong>globeoptimiser.com</strong>, you get a unified <strong>bulk image resizer</strong> and media converter. Swap formats between PNG, JPG, BMP, TIFF, GIF, and short MP4/WebM videos easily.</p>
             </article>
             <article class="benefit-card">
               <div class="benefit-icon">📦</div>
-              <strong>Free Online Image Compressor</strong>
-              <p>Looking to shrink files? <strong>jpgoptimiser.com</strong> functions as a <strong>free online image compressor</strong> and converter, maintaining high-fidelity pixel clarity and alpha transparency.</p>
+              <strong>Lossless Image Compression</strong>
+              <p>Looking to shrink files? <strong>globeoptimiser.com</strong> functions as a <strong>free online image compressor</strong> and converter, maintaining high-fidelity pixel clarity and alpha transparency.</p>
             </article>
             <article class="benefit-card">
               <div class="benefit-icon">✨</div>
-              <strong>Batch Resize & Convert</strong>
-              <p>Scale your digital campaigns fast. <strong>jpgoptimiser.com</strong> automates <strong>batch resize</strong> and conversion workflows so you can drag, drop, and download web-ready assets instantly.</p>
+              <strong>Batch Processing Engine</strong>
+              <p>Scale your digital campaigns fast. <strong>globeoptimiser.com</strong> automates <strong>batch resize</strong> and conversion workflows so you can drag, drop, and download web-ready assets instantly.</p>
             </article>
           </div>
         </section>
@@ -1231,7 +1240,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 jpgoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
+    <p>&copy; 2026 globeoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
     <p>Built for clean bulk conversion workflows.</p>
   </footer>
 
@@ -1258,7 +1267,7 @@
     const themeOptions = Array.from(document.querySelectorAll('.theme-option'));
     const themeIcon = document.getElementById('themeIcon');
 
-    const apiBaseMeta = document.querySelector('meta[name="jpgoptimiser-api-base"]');
+    const apiBaseMeta = document.querySelector('meta[name="globeoptimiser-api-base"]');
     const configuredApiBase = apiBaseMeta ? apiBaseMeta.content.trim().replace(/\/$/, '') : '';
     const resolvedApiBase = configuredApiBase || window.location.origin;
     const state = { files: [], result: null };
@@ -1293,7 +1302,7 @@
         : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
     };
 
-    const savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'system';
+    const savedTheme = localStorage.getItem('globeoptimiser-theme') || 'system';
     applyTheme(savedTheme);
 
     themeToggleBtn.addEventListener('click', (event) => {
@@ -1301,10 +1310,16 @@
       themeMenu.classList.toggle('open');
     });
 
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if ((localStorage.getItem('globeoptimiser-theme') || 'system') === 'system') {
+        applyTheme('system');
+      }
+    });
+
     themeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const nextTheme = option.dataset.theme;
-        localStorage.setItem('jpgoptimiser-theme', nextTheme);
+        localStorage.setItem('globeoptimiser-theme', nextTheme);
         applyTheme(nextTheme);
         themeMenu.classList.remove('open');
       });
@@ -1499,7 +1514,7 @@
           const filenameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
           const filename = filenameMatch && filenameMatch[1]
             ? filenameMatch[1].replace(/['"]/g, '')
-            : contentType.includes('zip') ? 'jpgoptimiser_converted_files.zip' : `converted.${targetFormatForFiles()}`;
+            : contentType.includes('zip') ? 'globeoptimiser_converted_files.zip' : `converted.${targetFormatForFiles()}`;
           renderResult({ blob, filename, contentType });
           downloadBlob(blob, filename);
           return;
@@ -1560,11 +1575,11 @@
       const cookieConsent = document.getElementById('cookieConsent');
       const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
       if (cookieConsent && acceptCookiesBtn) {
-        if (!localStorage.getItem('jpgoptimiser-cookies-accepted')) {
+        if (!localStorage.getItem('globeoptimiser-cookies-accepted')) {
           cookieConsent.style.display = 'flex';
         }
         acceptCookiesBtn.addEventListener('click', () => {
-          localStorage.setItem('jpgoptimiser-cookies-accepted', 'true');
+          localStorage.setItem('globeoptimiser-cookies-accepted', 'true');
           cookieConsent.style.display = 'none';
         });
       }
@@ -1593,7 +1608,7 @@
   </script>
   
   <div id="cookieConsent" class="cookie-consent-banner">
-    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on jpgoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
+    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on globeoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
     <button id="acceptCookiesBtn" type="button">Accept</button>
   </div>
 </body>

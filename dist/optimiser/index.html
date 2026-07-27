@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="jpgoptimiser-api-base" content="">
-  <title>jpgoptimiser.com — Premium JPG & Banner Resizer</title>
+  <meta name="globeoptimiser-api-base" content="">
+  <title>globeoptimiser.com — Premium Bulk Image Resizer & Compressor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -1545,7 +1545,7 @@
             <polyline points="21 15 16 10 5 21"></polyline>
           </svg>
         </div>
-        <div class="logo-text">jpg<span>optimiser.com</span></div>
+        <div class="logo-text">globe<span>optimiser.com</span></div>
       </a>
       <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -1557,6 +1557,15 @@
       <nav class="header-nav" id="headerNav">
         <a href="/" class="nav-link active">Optimiser</a>
         <a href="/converter" class="nav-link">Converter</a>
+        <div class="nav-item dropdown" style="position: relative; display: inline-block;">
+          <a href="/compress-video" class="nav-link">Video Tools ▼</a>
+          <div class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; background: var(--card-bg, #161e31); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.75rem; min-width: 240px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 100;">
+            <a href="/compress-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Compressor</strong></a>
+            <a href="/resize-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Resizer</strong></a>
+            <a href="/convert-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Converter</strong></a>
+            <a href="/watermark-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Watermark</strong></a>
+          </div>
+        </div>
       </nav>
       <div class="header-actions">
         <div class="theme-toggle-wrapper">
@@ -1823,28 +1832,28 @@
       </div>
         </section>
 
-        <section class="benefits-card" aria-label="Benefits of using jpgoptimiser">
-          <h3>Why use jpgoptimiser?</h3>
+        <section class="benefits-card" aria-label="Benefits of using globeoptimiser">
+          <h3>Why use globeoptimiser?</h3>
           <div class="benefits-grid">
             <article class="benefit-card">
               <div class="benefit-icon">⚡</div>
               <strong>Online Image Optimizer</strong>
-              <p>Accelerate your site speed with <strong>jpgoptimiser.com</strong>, the leading <strong>online image optimizer</strong>. Easily <strong>compress image online</strong> and improve Core Web Vitals to boost organic Google search rankings.</p>
+              <p>Accelerate your site speed with <strong>globeoptimiser.com</strong>, the leading <strong>online image optimizer</strong>. Easily <strong>compress image online</strong> and improve Core Web Vitals to boost organic Google search rankings.</p>
             </article>
             <article class="benefit-card">
               <div class="benefit-icon">🧰</div>
               <strong>Free Online Image Compressor</strong>
-              <p>Use <strong>jpgoptimiser.com</strong> as a <strong>free online image compressor</strong> to <strong>reduce JPG size</strong> to a specific limit in KB, or scale your files with our high-fidelity <strong>resize image online</strong> engine.</p>
+              <p>Use <strong>globeoptimiser.com</strong> as a <strong>free online image compressor</strong> to <strong>reduce JPG size</strong> to a specific limit in KB, or scale your files with our high-fidelity <strong>resize image online</strong> engine.</p>
             </article>
             <article class="benefit-card">
               <div class="benefit-icon">📦</div>
               <strong>Bulk Image Resizer</strong>
-              <p>Our professional <strong>bulk image resizer</strong> is built for marketing agencies. Batch process dozens of banner formats on <strong>jpgoptimiser.com</strong> in a single click to save hours of manual export time.</p>
+              <p>Our professional <strong>bulk image resizer</strong> is built for marketing agencies. Batch process dozens of banner formats on <strong>globeoptimiser.com</strong> in a single click to save hours of manual export time.</p>
             </article>
             <article class="benefit-card">
               <div class="benefit-icon">✨</div>
               <strong>Logo Watermark Tool</strong>
-              <p>Protect your creative assets with the <strong>jpgoptimiser.com</strong> <strong>logo watermark tool</strong>. Automatically stamp branding onto bulk images with smart, lossless compression.</p>
+              <p>Protect your creative assets with the <strong>globeoptimiser.com</strong> <strong>logo watermark tool</strong>. Automatically stamp branding onto bulk images with smart, lossless compression.</p>
             </article>
           </div>
         </section>
@@ -1902,7 +1911,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 jpgoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
+    <p>&copy; 2026 globeoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
     <p>Built for clean bulk conversion workflows.</p>
   </footer>
 
@@ -1978,7 +1987,7 @@
     };
 
     // Calculate resolved API Endpoint Base
-    const configuredApiBase = document.querySelector('meta[name="jpgoptimiser-api-base"]')?.getAttribute('content')?.trim() || '';
+    const configuredApiBase = document.querySelector('meta[name="globeoptimiser-api-base"]')?.getAttribute('content')?.trim() || '';
     const resolvedApiBase = configuredApiBase || (
       window.location.protocol === 'file:' ? 'http://127.0.0.1:8000' : window.location.origin
     );
@@ -2008,7 +2017,7 @@
     themeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const nextTheme = option.dataset.theme;
-        localStorage.setItem('jpgoptimiser-theme', nextTheme);
+        localStorage.setItem('globeoptimiser-theme', nextTheme);
         applyTheme(nextTheme);
         themeMenu.classList.remove('open');
       });
@@ -2039,7 +2048,7 @@
     };
 
     // Initialize theme from storage
-    const savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'system';
+    const savedTheme = localStorage.getItem('globeoptimiser-theme') || 'system';
     applyTheme(savedTheme);
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
@@ -2525,11 +2534,11 @@
       const cookieConsent = document.getElementById('cookieConsent');
       const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
       if (cookieConsent && acceptCookiesBtn) {
-        if (!localStorage.getItem('jpgoptimiser-cookies-accepted')) {
+        if (!localStorage.getItem('globeoptimiser-cookies-accepted')) {
           cookieConsent.style.display = 'flex';
         }
         acceptCookiesBtn.addEventListener('click', () => {
-          localStorage.setItem('jpgoptimiser-cookies-accepted', 'true');
+          localStorage.setItem('globeoptimiser-cookies-accepted', 'true');
           cookieConsent.style.display = 'none';
         });
       }
@@ -2559,7 +2568,7 @@
   </script>
   
   <div id="cookieConsent" class="cookie-consent-banner">
-    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on jpgoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
+    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on globeoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
     <button id="acceptCookiesBtn" type="button">Accept</button>
   </div>
 </body>

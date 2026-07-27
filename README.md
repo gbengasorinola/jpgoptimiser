@@ -1,4 +1,4 @@
-JPG Optimiser
+Globe Optimiser
 =================
 
 Quickstart (development)
@@ -22,7 +22,17 @@ pip install -r requirements.txt
 - Run the dev server (auto-reload):
 
 ```bash
+npm run dev
+# OR
 uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+- Build static distribution files:
+
+```bash
+npm run build
+# OR
+python3 scripts/build_dist.py
 ```
 
 - Verify: open `http://127.0.0.1:8000/health`

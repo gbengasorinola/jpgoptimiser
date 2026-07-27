@@ -583,7 +583,7 @@ def resolve_seo_data(path: str) -> dict | None:
     
     # Case 1: Core pages
     if path == "":
-        data["title"] = "jpgoptimiser.com — Premium Bulk Image Resizer & Compressor"
+        data["title"] = "globeoptimiser.com — Premium Bulk Image Resizer & Compressor"
         data["meta_description"] = "Resize dimensions, compress to target limits in KB, and watermark branding onto your creative banners. Direct, fast, and entirely in your browser."
         data["h1"] = "The Easiest Way to <mark>Optimise</mark> Banners & Images"
         data["intro_copy"] = "Bulk resize dimensions, compress files to target limits, and stamp brand logos onto your creative banners. Direct, fast, and entirely inside your browser."
@@ -600,7 +600,7 @@ def resolve_seo_data(path: str) -> dict | None:
             "Configure limits or dimensions, then click Process Files."
         ]
         data["faqs"] = [
-            {"q": "Is my data safe on jpgoptimiser?", "a": "Yes! All processing runs securely in our high-performance engine. Your files are never stored permanently."},
+            {"q": "Is my data safe on globeoptimiser?", "a": "Yes! All processing runs securely in our high-performance engine. Your files are never stored permanently."},
             {"q": "Can I process animations?", "a": "Yes, our engine supports compressing and converting animated GIF files, helping you optimize them for web page headers."},
             {"q": "Is there a bulk file limit?", "a": "You can process multiple files simultaneously up to a total batch size of 50MB."}
         ]
@@ -965,8 +965,8 @@ def resolve_seo_data(path: str) -> dict | None:
 
     # Case 7: Static Content Pages
     if path in ["about", "privacy", "terms", "contact"]:
-        data["title"] = f"{path.capitalize()} Us — jpgoptimiser.com"
-        data["meta_description"] = f"Learn more about jpgoptimiser.com. Review our {path} information, user guides, and contact details."
+        data["title"] = f"{path.capitalize()} Us — globeoptimiser.com"
+        data["meta_description"] = f"Learn more about globeoptimiser.com. Review our {path} information, user guides, and contact details."
         return data
 
     return None

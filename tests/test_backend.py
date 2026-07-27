@@ -17,7 +17,8 @@ def image_bytes(
     color: tuple[int, int, int, int] = (40, 120, 210, 255),
     image_format: str = "PNG",
 ) -> bytes:
-    image = Image.new("RGBA", size, color)
+    mode = "RGB" if image_format.upper() in ("JPG", "JPEG") else "RGBA"
+    image = Image.new(mode, size, color[:3] if mode == "RGB" else color)
     buffer = io.BytesIO()
     image.save(buffer, format=image_format)
     return buffer.getvalue()
@@ -41,6 +42,22 @@ def test_optimize_requires_upload() -> None:
     assert response.status_code == 422
     assert response.headers["content-type"] == "application/zip"
     assert "errors.txt" in zip_names(response.content)
+
+
+def test_process_watermark_happy_path() -> None:
+    response = client.post(
+        "/process",
+        data={"placement_mode": "smart"},
+        files={
+            "banners": ("banner.png", image_bytes((300, 250)), "image/png"),
+            "logo": ("logo.png", image_bytes((50, 50)), "image/png"),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert 'filename="banner_processed.png"' in response.headers["content-disposition"]
+
 
 
 def test_resize_image_happy_path() -> None:
@@ -160,7 +177,7 @@ def test_sitemap_xml() -> None:
     assert response.status_code == 200
     assert "application/xml" in response.headers["content-type"]
     assert "<urlset" in response.text
-    assert "https://jpgoptimiser.com/jpg-to-png" in response.text
+    assert "https://globeoptimiser.com/jpg-to-png" in response.text
 
 
 def test_blog_list_page() -> None:
@@ -217,4 +234,68 @@ def test_video_blog_articles() -> None:
         response = client.get(f"/blog/{post_slug}")
         assert response.status_code == 200
         assert "video" in response.text.lower()
+
+
+def test_batch_zip_downloads() -> None:
+    # Test batch conversion zip
+    response = client.post(
+        "/convert",
+        data={"target_format": "png"},
+        files=[
+            ("images", ("img1.jpg", image_bytes((64, 64), image_format="JPEG"), "image/jpeg")),
+            ("images", ("img2.jpg", image_bytes((64, 64), image_format="JPEG"), "image/jpeg")),
+        ],
+    )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/zip"
+    assert 'filename="globeoptimiser_converted_files.zip"' in response.headers["content-disposition"]
+    filenames = zip_names(response.content)
+    assert "img1_converted.png" in filenames
+    assert "img2_converted.png" in filenames
+
+    # Test batch resizing zip
+    response = client.post(
+        "/resize",
+        data={"target_width": "100", "target_height": "100", "mode": "solid_background"},
+        files=[
+            ("images", ("a.png", image_bytes((200, 200)), "image/png")),
+            ("images", ("b.png", image_bytes((200, 200)), "image/png")),
+        ],
+    )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/zip"
+    assert 'filename="globeoptimiser_resized_images.zip"' in response.headers["content-disposition"]
+
+
+def test_video_conversion_and_resizing() -> None:
+    import tempfile
+    from moviepy import ColorClip
+    from backend.converter_engine import convert_video_bytes
+    from backend.resizer import process_single_video_resize, ResizeTask, ResizeTarget
+
+    clip = ColorClip(size=(64, 64), color=(200, 50, 50), duration=0.5)
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as f:
+        clip.write_videofile(f.name, fps=10, codec="libx264", logger=None)
+        f.seek(0)
+        video_bytes = open(f.name, "rb").read()
+
+    # Verify video conversion
+    out_bytes, out_name = convert_video_bytes(video_bytes, "sample.mp4", "webm")
+    assert out_name == "sample_converted.webm"
+    assert len(out_bytes) > 0
+
+    # Verify video resizing
+    task = ResizeTask(
+        filename="sample.mp4",
+        image_bytes=video_bytes,
+        target=ResizeTarget(120, 120),
+        mode="solid_background",
+        background_color="#ffffff",
+    )
+    res = process_single_video_resize(task)
+    assert res.error is None
+    assert res.output_name == "sample_120x120_solid_background.mp4"
+    assert len(res.output_bytes or b"") > 0
+
+
 

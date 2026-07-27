@@ -462,8 +462,8 @@
       </section>
 
       <!-- Dynamic SEO Content -->
-      <section class="benefits-card" aria-label="Benefits of using jpgoptimiser">
-        <h3>Why use jpgoptimiser?</h3>
+      <section class="benefits-card" aria-label="Benefits of using globeoptimiser">
+        <h3>Why use globeoptimiser?</h3>
         <div class="benefits-grid">
           {% for benefit in seo_data.benefits %}
           <article class="benefit-card">
@@ -514,7 +514,7 @@
       <!-- SEO CTA Section -->
       <section class="cta-section">
         <h3>Need to convert format, stamp logo or downsize banners?</h3>
-        <p>Use jpgoptimiser's high-speed engine. All processing runs on safe baseline algorithms instantly in your browser. Batch optimize your creative banners now.</p>
+        <p>Use globeoptimiser's high-speed engine. All processing runs on safe baseline algorithms instantly in your browser. Batch optimize your creative banners now.</p>
         <a href="#bannerDropzone" class="cta-btn">Get Started Now</a>
       </section>
     </div>
@@ -610,7 +610,7 @@
   }
 
   // API base mapping
-  const configuredApiBase = document.querySelector('meta[name="jpgoptimiser-api-base"]')?.getAttribute('content')?.trim() || '';
+  const configuredApiBase = document.querySelector('meta[name="globeoptimiser-api-base"]')?.getAttribute('content')?.trim() || '';
   const resolvedApiBase = configuredApiBase || (
     window.location.protocol === 'file:' ? 'http://127.0.0.1:8000' : window.location.origin
   );

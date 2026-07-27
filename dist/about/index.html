@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>About Us — jpgoptimiser.com</title>
+  <title>About Us — globeoptimiser.com</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -435,7 +435,7 @@
             <polyline points="21 15 16 10 5 21"></polyline>
           </svg>
         </div>
-        <div class="logo-text">jpg<span>optimiser.com</span></div>
+        <div class="logo-text">globe<span>optimiser.com</span></div>
       <a href="/" class="logo-container">
         <div class="logo-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -444,7 +444,7 @@
             <polyline points="21 15 16 10 5 21"></polyline>
           </svg>
         </div>
-        <div class="logo-text">jpg<span>optimiser.com</span></div>
+        <div class="logo-text">globe<span>optimiser.com</span></div>
       </a>
       <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -456,6 +456,15 @@
       <nav class="header-nav" id="headerNav">
         <a href="/" class="nav-link">Optimiser</a>
         <a href="/converter" class="nav-link">Converter</a>
+        <div class="nav-item dropdown" style="position: relative; display: inline-block;">
+          <a href="/compress-video" class="nav-link">Video Tools ▼</a>
+          <div class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; background: var(--card-bg, #161e31); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.75rem; min-width: 240px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 100;">
+            <a href="/compress-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Compressor</strong></a>
+            <a href="/resize-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Resizer</strong></a>
+            <a href="/convert-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Converter</strong></a>
+            <a href="/watermark-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Watermark</strong></a>
+          </div>
+        </div>
       </nav>
       <div class="header-actions">
         <div class="theme-toggle-wrapper">
@@ -480,7 +489,7 @@
     <article class="about-card">
       <h1>About Us</h1>
       
-      <p>Welcome to <strong>jpgoptimiser.com</strong>, a free online platform engineered to optimize digital media files for maximum web performance. Our primary mission is to simplify asset preparation, helping developers, marketers, and design teams improve loading speeds and SEO search rankings.</p>
+      <p>Welcome to <strong>globeoptimiser.com</strong>, a free online platform engineered to optimize digital media files for maximum web performance. Our primary mission is to simplify asset preparation, helping developers, marketers, and design teams improve loading speeds and SEO search rankings.</p>
 
       <h2>Our Core Technology</h2>
       <p>We believe file optimization shouldn't compromise visual clarity. Our suite of browser-driven tools includes:</p>
@@ -492,20 +501,20 @@
       </ul>
 
       <h2>Why Core Web Vitals Matter</h2>
-      <p>Unoptimised images account for the majority of a page's download payload. By utilizing <strong>jpgoptimiser.com</strong> to reduce file sizes, you directly enhance your website's Largest Contentful Paint (LCP) and Interaction to Next Paint (INP) metrics, ensuring visitors enjoy faster, more responsive browsing experiences.</p>
+      <p>Unoptimised images account for the majority of a page's download payload. By utilizing <strong>globeoptimiser.com</strong> to reduce file sizes, you directly enhance your website's Largest Contentful Paint (LCP) and Interaction to Next Paint (INP) metrics, ensuring visitors enjoy faster, more responsive browsing experiences.</p>
 
       <h2>Get in Touch</h2>
       <p>We are constantly improving our algorithms and features. If you have feedback, questions, or feature requests, feel free to contact us:</p>
       
       <div class="contact-info">
-        <p><strong>Support & Feedback:</strong> support@jpgoptimiser.com</p>
+        <p><strong>Support & Feedback:</strong> support@globeoptimiser.com</p>
         <p><strong>Response Time:</strong> Typically within 24-48 business hours.</p>
       </div>
     </article>
   </main>
 
   <footer>
-    <p>&copy; 2026 jpgoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
+    <p>&copy; 2026 globeoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
     <p>Built for clean bulk conversion workflows.</p>
   </footer>
 
@@ -552,7 +561,7 @@
     themeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const nextTheme = option.dataset.theme;
-        localStorage.setItem('jpgoptimiser-theme', nextTheme);
+        localStorage.setItem('globeoptimiser-theme', nextTheme);
         applyTheme(nextTheme);
         themeMenu.classList.remove('open');
       });
@@ -562,7 +571,7 @@
       themeMenu.classList.remove('open');
     });
 
-    const savedTheme = localStorage.getItem('jpgoptimiser-theme') || 'system';
+    const savedTheme = localStorage.getItem('globeoptimiser-theme') || 'system';
     applyTheme(savedTheme);
 
     // Cookie Consent Banner Logic
@@ -570,11 +579,11 @@
       const cookieConsent = document.getElementById('cookieConsent');
       const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
       if (cookieConsent && acceptCookiesBtn) {
-        if (!localStorage.getItem('jpgoptimiser-cookies-accepted')) {
+        if (!localStorage.getItem('globeoptimiser-cookies-accepted')) {
           cookieConsent.style.display = 'flex';
         }
         acceptCookiesBtn.addEventListener('click', () => {
-          localStorage.setItem('jpgoptimiser-cookies-accepted', 'true');
+          localStorage.setItem('globeoptimiser-cookies-accepted', 'true');
           cookieConsent.style.display = 'none';
         });
       }
@@ -603,7 +612,7 @@
   </script>
   
   <div id="cookieConsent" class="cookie-consent-banner">
-    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on jpgoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
+    <p>We use cookies to personalize content and ads, analyze our traffic, and improve your experience on globeoptimiser.com. By clicking "Accept", you consent to our cookies. Learn more in our <a href="/privacy">Privacy Policy</a>.</p>
     <button id="acceptCookiesBtn" type="button">Accept</button>
   </div>
 </body>
