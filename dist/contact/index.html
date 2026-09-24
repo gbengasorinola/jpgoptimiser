@@ -2,6 +2,243 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
+  <!-- 1. Google Consent Mode v2 Default Privacy Configuration Layer -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+
+    // Set privacy defaults immediately before any ad network processing calls fire
+    gtag("consent", "default", {
+      "ad_storage": "denied",
+      "ad_user_data": "denied",
+      "ad_personalization": "denied",
+      "analytics_storage": "denied",
+      "wait_for_update": 500
+    });
+
+    // Global helper bridge to dynamically feed user choices from your Consent Banner into GPT
+    window.updateGptConsentState = function(consentedToAds, consentedToAnalytics) {
+      var statusAds = consentedToAds ? "granted" : "denied";
+      var statusAnalytics = consentedToAnalytics ? "granted" : "denied";
+
+      gtag("consent", "update", {
+        "ad_storage": statusAds,
+        "ad_user_data": statusAds,
+        "ad_personalization": statusAds,
+        "analytics_storage": statusAnalytics
+      });
+
+      if (window.googletag && typeof googletag.pubads === "function") {
+        googletag.cmd.push(function() {
+          googletag.pubads().refresh();
+        });
+      }
+      console.log("[GPT Consent Engine] Signals updated: Ads (" + statusAds + "), Analytics (" + statusAnalytics + ")");
+    };
+  </script>
+
+  <!-- 2. Async Secure Google Publisher Tag Library -->
+  <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+
+  <!-- 3. Enterprise-Grade Ad Architecture with Interstitial, Anchor, & Fluid Support -->
+  <script>
+    window.googletag = window.googletag || {cmd: []};
+
+    // Slot Registry & Monitored State Namespace
+    window.gptTrackingEngine = {
+      refreshableSlots: [],
+      refreshIntervalMs: 60000,
+      isProcessingRefresh: false,
+      viewableSlotTracker: {},
+      viewabilityObserver: null,
+
+      destroyEngine: function() {
+        if (this.viewabilityObserver) this.viewabilityObserver.disconnect();
+        if (window.googletag && typeof googletag.destroySlots === "function") {
+          googletag.cmd.push(function() { googletag.destroySlots(); });
+        }
+        console.log("[GPT Engine] Complete teardown executed. Registry cleared.");
+      }
+    };
+
+    googletag.cmd.push(function() {
+      /* =========================
+          SIZE MAPPINGS (FLUID ENABLED)
+         ========================== */
+      var mappingTop = googletag.sizeMapping()
+        .addSize([1024, 0], [[970, 90], [728, 90], [970, 66], [320, 100], [300, 250], [366, 280], [336, 280], [320, 480], [320, 50], [300, 100], [300, 50], [160, 600], [120, 600], "fluid"])
+        .addSize([768, 0], [[728, 90], [300, 250], [300, 100], "fluid"])
+        .addSize([0, 0], [[300, 250], [250, 250], [336, 280], [320, 480], [366, 280],  [200, 200], [320, 50], "fluid"])
+        .build();
+
+      var mappingBody = googletag.sizeMapping()
+        .addSize([768, 0], [[728, 90], [300, 250], "fluid"])
+        .addSize([0, 0], [[300, 250], [250, 250], [320, 50], "fluid"])
+        .build();
+
+      /* =========================
+          SPECIAL FORMATS (Anchor & Interstitial)
+         ========================== */
+      // 1. Bottom Anchor / Sticky Ad
+      var anchorSlot = googletag.defineOutOfPageSlot(
+        "/23043164651/globeoptimiser/globeoptimiser_anchor",
+        googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+      );
+      if (anchorSlot) {
+        anchorSlot.addService(googletag.pubads());
+      }
+
+      // 2. Web Interstitial Ad
+      var interstitialSlot = googletag.defineOutOfPageSlot(
+        "/23043164651/globeoptimiser/globeoptimiser_intersitital",
+        googletag.enums.OutOfPageFormat.INTERSTITIAL
+      );
+      if (interstitialSlot) {
+        interstitialSlot.addService(googletag.pubads());
+      }
+
+      /* =========================
+          STANDARD BANNER SLOT REGISTRY
+         ========================== */
+      var slotsToRegister = [
+        {
+          path: "/23043164651/globeoptimiser_sidebar2",
+          sizes: [[160, 600], [120, 600], "fluid"],
+          div: "div-gpt-ad-1789999691219-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_sidebar1",
+          sizes: [[160, 600], [120, 600], "fluid"],
+          div: "div-gpt-ad-1789999580078-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner1",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1789998229083-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner2",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790267192349-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner3",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790267487184-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner4",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790268002577-0",
+          type: "top"
+        }
+      ];
+
+      slotsToRegister.forEach(function(config) {
+        var definedSlot = googletag.defineSlot(config.path, config.sizes, config.div)
+          .defineSizeMapping(config.type === "top" ? mappingTop : mappingBody)
+          .addService(googletag.pubads());
+
+        window.gptTrackingEngine.refreshableSlots.push(definedSlot);
+      });
+
+      /* =========================
+          EVENT LISTENERS
+         ========================== */
+      googletag.pubads().addEventListener("slotRenderEnded", function(event) {
+        window.gptTrackingEngine.isProcessingRefresh = false;
+        console.log("[GPT Debug Hook] Render Ended:", event.slot.getSlotElementId(), "| Empty:", event.isEmpty, "| Dispatched Size:", event.size);
+      });
+
+      googletag.pubads().addEventListener("impressionViewable", function(event) {
+        console.log("[GPT Debug Hook] Active View Confirmed - Ad visible to user:", event.slot.getSlotElementId());
+      });
+
+      var visibilityTimers = {};
+      googletag.pubads().addEventListener("slotVisibilityChanged", function(event) {
+        var slotId = event.slot.getSlotElementId();
+        if (visibilityTimers[slotId]) clearTimeout(visibilityTimers[slotId]);
+
+        visibilityTimers[slotId] = setTimeout(function() {
+          console.log("[GPT Debug Hook] Real-Time Visibility Change:", slotId, "->", event.inViewPercentage + "%");
+        }, 150);
+      });
+
+      /* =========================
+          GPT SYSTEM CONFIGURATIONS
+         ========================== */
+      googletag.pubads().enableSingleRequest();
+
+      googletag.pubads().enableLazyLoad({
+        fetchMarginPercent: 200,
+        renderMarginPercent: 50,
+        mobileScaling: 2.0
+      });
+
+      googletag.pubads().setTargeting("sections", ["all"]);
+      googletag.pubads().collapseEmptyDivs(true);
+      googletag.pubads().enableVideoAds();
+      googletag.enableServices();
+    });
+
+    /* =========================
+        INTERSECTION OBSERVER & REFRESH LOGIC
+       ========================== */
+    document.addEventListener("DOMContentLoaded", function() {
+      if ("IntersectionObserver" in window) {
+        window.gptTrackingEngine.viewabilityObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            var id = entry.target.id;
+            if (entry.intersectionRatio >= 0.5) {
+              if (!window.gptTrackingEngine.viewableSlotTracker[id]) {
+                window.gptTrackingEngine.viewableSlotTracker[id] = Date.now();
+              }
+            } else {
+              window.gptTrackingEngine.viewableSlotTracker[id] = null;
+            }
+          });
+        }, { threshold: [0.0, 0.5, 1.0] });
+
+        var slotDivIds = [
+          "div-gpt-ad-1789999691219-0",
+          "div-gpt-ad-1789999580078-0",
+          "div-gpt-ad-1789998229083-0",
+          "div-gpt-ad-1790267192349-0",
+          "div-gpt-ad-1790267487184-0",
+          "div-gpt-ad-1790268002577-0"
+        ];
+
+        slotDivIds.forEach(function(divId) {
+          var el = document.getElementById(divId);
+          if (el) window.gptTrackingEngine.viewabilityObserver.observe(el);
+        });
+      }
+
+      // Auto-Refresh Engine
+      setInterval(function() {
+        if (document.hidden || window.gptTrackingEngine.isProcessingRefresh) return;
+
+        if (window.googletag && googletag.apiReady) {
+          var slotsEligibleForRefresh = window.gptTrackingEngine.refreshableSlots.filter(function(slot) {
+            var divId = slot.getSlotElementId();
+            var visibleSince = window.gptTrackingEngine.viewableSlotTracker[divId];
+            return visibleSince && (Date.now() - visibleSince >= 1000);
+          });
+
+          if (slotsEligibleForRefresh.length > 0) {
+            console.log("[GPT Engine] Viewable Refresh Throttling Gate Passed. Refreshing slots:", slotsEligibleForRefresh.length);
+            window.gptTrackingEngine.isProcessingRefresh = true;
+            googletag.pubads().refresh(slotsEligibleForRefresh);
+          }
+        }
+      }, window.gptTrackingEngine.refreshIntervalMs);
+    });
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contact Us — globeoptimiser.com</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,34 +247,93 @@
   
   <style>
     :root {
-      --bg: #090a10;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --surface-hover: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-heading: #1e293b;
+      --border: rgba(15, 23, 42, 0.08);
+      --border-hover: rgba(15, 23, 42, 0.15);
+      --border-focus: rgba(37, 99, 235, 0.5);
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: rgba(37, 99, 235, 0.08);
+      --primary-gradient: linear-gradient(135deg, #06b6d4, #2563eb);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-pill: 9999px;
+      --max-width: 600px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0f19;
       --surface: rgba(15, 19, 28, 0.7);
       --surface-soft: rgba(22, 28, 38, 0.9);
       --surface-hover: rgba(30, 39, 53, 0.6);
       --text: #f8fafc;
       --text-muted: #94a3b8;
-      --border: rgba(255, 255, 255, 0.06);
-      --border-hover: rgba(255, 255, 255, 0.12);
-      --border-focus: rgba(16, 185, 129, 0.4);
-      --primary: #10b981;
-      --primary-hover: #059669;
-      --primary-soft: rgba(16, 185, 129, 0.08);
-      --primary-gradient: linear-gradient(135deg, #10b981, #059669);
-      --radius: 10px;
-      --radius-sm: 6px;
-      --max-width: 600px;
+      --text-heading: #f8fafc;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --border-focus: rgba(37, 99, 235, 0.4);
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-soft: rgba(59, 130, 246, 0.15);
     }
 
-    [data-theme="light"] {
-      --bg: #f8fafc;
-      --surface: rgba(255, 255, 255, 0.75);
-      --surface-soft: rgba(241, 245, 249, 0.95);
-      --surface-hover: rgba(226, 232, 240, 0.8);
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --border: rgba(15, 23, 42, 0.08);
-      --border-hover: rgba(15, 23, 42, 0.15);
-      --border-focus: rgba(16, 185, 129, 0.5);
+    /* Ambient Organic Waves Backdrop */
+    .hero-backdrop-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 380px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-waves-svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .logo-ring-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      transition: transform 0.2s ease;
+    }
+    .logo-container:hover .logo-ring-icon {
+      transform: rotate(30deg);
+    }
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+    .pill-badge:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .pill-count {
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 99px;
+      font-weight: 700;
     }
 
     * {
@@ -501,21 +797,95 @@
         text-align: center;
       }
     }
-  </style>
+  
+    .app-layout-wrapper {
+      position: relative;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .ad-slot {
+      background: var(--surface-soft, rgba(22, 28, 38, 0.9));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+      border-radius: var(--radius, 12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      transition: all 0.2s ease;
+      color: var(--text-muted, #94a3b8);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .ad-slot:hover {
+      border-color: var(--border-hover, rgba(255, 255, 255, 0.15));
+    }
+
+    .ad-label {
+      position: absolute;
+      top: 6px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted, #94a3b8);
+      opacity: 0.5;
+      z-index: 1;
+    }
+
+    .ad-leaderboard {
+      width: 100%;
+      max-width: 970px;
+      min-height: 90px;
+      margin: 0 auto 24px;
+    }
+
+    .ad-sidebar {
+      width: 160px;
+      min-height: 600px;
+      position: absolute;
+      top: 0;
+      z-index: 10;
+      display: none;
+    }
+
+    .ad-sidebar:first-of-type {
+      right: calc(100% + 20px);
+    }
+
+    .ad-sidebar:last-of-type {
+      left: calc(100% + 20px);
+    }
+
+    @media (min-width: 1360px) {
+      .ad-sidebar {
+        display: flex;
+      }
+    }
+</style>
 </head>
 <body>
 
   <header>
     <div class="header-container">
       <a href="/" class="logo-container">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-            <polyline points="21 15 16 10 5 21"></polyline>
+        <div class="logo-ring-icon">
+          <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
+            <defs>
+              <linearGradient id="logoArcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06b6d4"/>
+                <stop offset="50%" stop-color="#2563eb"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+            </defs>
+            <circle cx="18" cy="18" r="14" stroke="url(#logoArcGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="72 16" />
+            <circle cx="18" cy="18" r="4.5" fill="#2563eb" />
           </svg>
         </div>
-        <div class="logo-text">globe<span>optimiser.com</span></div>
+        <div class="logo-text">GLOBE<span>OPTIMISER</span></div>
       </a>
       <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -525,17 +895,12 @@
         </svg>
       </button>
       <nav class="header-nav" id="headerNav">
-        <a href="/" class="nav-link">Optimiser</a>
-        <a href="/converter" class="nav-link">Converter</a>
-        <div class="nav-item dropdown" style="position: relative; display: inline-block;">
-          <a href="/compress-video" class="nav-link">Video Tools ▼</a>
-          <div class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; background: var(--card-bg, #161e31); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.75rem; min-width: 240px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 100;">
-            <a href="/compress-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Compressor</strong></a>
-            <a href="/resize-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Resizer</strong></a>
-            <a href="/convert-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Converter</strong></a>
-            <a href="/watermark-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Watermark</strong></a>
-          </div>
-        </div>
+        <a href="/" class="nav-link">Convert images</a>
+        <a href="/converter" class="nav-link">File Converter</a>
+        <a href="/compress-video" class="nav-link">Compress video</a>
+        <a href="/convert-video" class="nav-link">Convert video</a>
+        <a href="/resize-video" class="nav-link">Resize video</a>
+        <a href="/about" class="nav-link">Help</a>
       </nav>
       <div class="header-actions">
         <div class="theme-toggle-wrapper">
@@ -556,7 +921,48 @@
     </div>
   </header>
 
+  <!-- Ambient Organic Waves Backdrop -->
+  <div class="hero-backdrop-container" aria-hidden="true">
+    <svg class="hero-waves-svg" viewBox="0 0 1440 380" fill="none" preserveAspectRatio="none">
+      <path d="M0,140 C320,240 480,60 800,150 C1120,240 1280,80 1440,140 L1440,0 L0,0 Z" fill="url(#heroWaveGrad1)" opacity="0.6"/>
+      <path d="M0,200 C360,90 640,260 960,140 C1200,60 1360,200 1440,140 L1440,0 L0,0 Z" fill="url(#heroWaveGrad2)" opacity="0.45"/>
+      <defs>
+        <linearGradient id="heroWaveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e0e7ff" stop-opacity="0.8"/>
+          <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#f0fdf4" stop-opacity="0.3"/>
+        </linearGradient>
+        <linearGradient id="heroWaveGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ede9fe" stop-opacity="0.7"/>
+          <stop offset="60%" stop-color="#e0f2fe" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#dbeafe" stop-opacity="0.25"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
   <main class="main-container">
+    <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_banner1 -->
+      <div id="div-gpt-ad-1789998229083-0" style="min-width: 200px; min-height: 50px;">
+        <script>
+          googletag.cmd.push(function() { googletag.display("div-gpt-ad-1789998229083-0"); });
+        </script>
+      </div>
+    </div>
+
+    <div class="app-layout-wrapper">
+      <aside class="ad-slot ad-sidebar" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <!-- /23043164651/globeoptimiser_sidebar1 -->
+        <div id="div-gpt-ad-1789999580078-0" style="min-width: 120px; min-height: 600px;">
+          <script>
+            googletag.cmd.push(function() { googletag.display("div-gpt-ad-1789999580078-0"); });
+          </script>
+        </div>
+      </aside>
+
     <div class="about-card">
       <h1>Contact Us</h1>
       <p class="subtitle">Have questions or feedback? Drop us a line below and we'll get back to you shortly. You can also reach us directly at <strong>support@globeoptimiser.com</strong>.</p>
@@ -588,6 +994,28 @@
         </button>
       </form>
     </div>
+      <aside class="ad-slot ad-sidebar" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <!-- /23043164651/globeoptimiser_sidebar2 -->
+        <div id="div-gpt-ad-1789999691219-0" style="min-width: 120px; min-height: 600px;">
+          <script>
+            googletag.cmd.push(function() { googletag.display("div-gpt-ad-1789999691219-0"); });
+          </script>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bottom Leaderboard Ad -->
+    <div class="ad-slot ad-leaderboard" style="margin-bottom: 30px;" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_banner2 -->
+      <div id="div-gpt-ad-1790267192349-0" style="min-width: 200px; min-height: 50px;">
+        <script>
+          googletag.cmd.push(function() { googletag.display("div-gpt-ad-1790267192349-0"); });
+        </script>
+      </div>
+    </div>
+
   </main>
 
   <footer>
@@ -692,22 +1120,40 @@
       btnText.textContent = 'Sending...';
 
       try {
-        const response = await fetch('/contact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ name, email, subject, message })
-        });
+        /* 
+          GOOGLE APPS SCRIPT WEB APP INTEGRATION (Static cPanel Setup):
+          1. Create a Google Sheet & go to Extensions -> Apps Script
+          2. Paste:
+             function doPost(e) {
+               var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+               var data = JSON.parse(e.postData.contents);
+               sheet.appendRow([new Date(), data.name, data.email, data.subject, data.message]);
+               return ContentService.createTextOutput(JSON.stringify({"result":"success"})).setMimeType(ContentService.MimeType.JSON);
+             }
+          3. Click Deploy -> New deployment -> Web app -> Execute as: Me -> Who has access: Anyone
+          4. Copy the Web App URL and place it in the meta tag <meta name="google-apps-script-url" content="YOUR_URL"> or window.GOOGLE_APPS_SCRIPT_URL
+        */
+        const appScriptMeta = document.querySelector('meta[name="google-apps-script-url"]');
+        const appScriptUrl = appScriptMeta ? appScriptMeta.content.trim() : (window.GOOGLE_APPS_SCRIPT_URL || '');
 
-        if (response.ok) {
+        if (appScriptUrl) {
+          await fetch(appScriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, subject, message, timestamp: new Date().toISOString() })
+          });
           showToast('Thank you! Your message has been sent successfully.');
           contactForm.reset();
         } else {
-          showToast('Failed to send message. Please try again later.', true);
+          // Mailto fallback for static hosting
+          const mailtoLink = `mailto:support@globeoptimiser.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
+          window.location.href = mailtoLink;
+          showToast('Thank you! Opening your email app to send the message...');
+          contactForm.reset();
         }
       } catch (err) {
-        showToast('An error occurred. Please check your connection.', true);
+        showToast('An error occurred. Please try again.', true);
       } finally {
         submitBtn.disabled = false;
         btnSpinner.style.display = 'none';

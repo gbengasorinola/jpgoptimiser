@@ -182,45 +182,69 @@
 {% endblock %}
 
 {% block content %}
-  <div class="static-card">
-    <h1>{{ title_header }}</h1>
-    {% if subtitle %}
-      <p class="subtitle">{{ subtitle }}</p>
-    {% endif %}
-
-    {% if page_name == 'contact' %}
-      <form id="contactForm" class="contact-form" novalidate>
-        <div class="form-group">
-          <label for="nameInput">Name</label>
-          <input class="form-input" id="nameInput" type="text" placeholder="Your Name" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="emailInput">Email Address</label>
-          <input class="form-input" id="emailInput" type="email" placeholder="you@example.com" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="subjectInput">Subject</label>
-          <input class="form-input" id="subjectInput" type="text" placeholder="What is this regarding?" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="messageInput">Message</label>
-          <textarea class="form-textarea" id="messageInput" placeholder="Your message here..." required></textarea>
-        </div>
-        
-        <button class="submit-btn" id="submitBtn" type="submit">
-          <span class="spinner" id="btnSpinner"></span>
-          <span id="btnText">Send Message</span>
-        </button>
-      </form>
-      <div id="toastNotification" class="toast"></div>
-    {% else %}
-      <div class="static-content">
-        {{ html_content | safe }}
+  <div class="app-layout-wrapper">
+    <!-- Left Sticky Ad Slot (160x600 skyscraper) -->
+    <aside class="ad-slot ad-sidebar ad-sidebar-left" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_sidebar1 -->
+      <div id='div-gpt-ad-1789999580078-0' style='min-width: 120px; min-height: 600px;'>
+        <script>
+          googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789999580078-0'); });
+        </script>
       </div>
-    {% endif %}
+    </aside>
+
+    <div class="static-card">
+      <h1>{{ title_header }}</h1>
+      {% if subtitle %}
+        <p class="subtitle">{{ subtitle }}</p>
+      {% endif %}
+
+      {% if page_name == 'contact' %}
+        <form id="contactForm" class="contact-form" novalidate>
+          <div class="form-group">
+            <label for="nameInput">Name</label>
+            <input class="form-input" id="nameInput" type="text" placeholder="Your Name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="emailInput">Email Address</label>
+            <input class="form-input" id="emailInput" type="email" placeholder="you@example.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="subjectInput">Subject</label>
+            <input class="form-input" id="subjectInput" type="text" placeholder="What is this regarding?" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="messageInput">Message</label>
+            <textarea class="form-textarea" id="messageInput" placeholder="Your message here..." required></textarea>
+          </div>
+          
+          <button class="submit-btn" id="submitBtn" type="submit">
+            <span class="spinner" id="btnSpinner"></span>
+            <span id="btnText">Send Message</span>
+          </button>
+        </form>
+        <div id="toastNotification" class="toast"></div>
+      {% else %}
+        <div class="static-content">
+          {{ html_content | safe }}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Sticky Ad Slot (160x600 skyscraper) -->
+    <aside class="ad-slot ad-sidebar ad-sidebar-right" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_sidebar2 -->
+      <div id='div-gpt-ad-1789999691219-0' style='min-width: 120px; min-height: 600px;'>
+        <script>
+          googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789999691219-0'); });
+        </script>
+      </div>
+    </aside>
   </div>
 {% endblock %}
 

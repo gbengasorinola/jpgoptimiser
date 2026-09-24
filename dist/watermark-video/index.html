@@ -2,6 +2,243 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- 1. Google Consent Mode v2 Default Privacy Configuration Layer -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+
+    // Set privacy defaults immediately before any ad network processing calls fire
+    gtag("consent", "default", {
+      "ad_storage": "denied",
+      "ad_user_data": "denied",
+      "ad_personalization": "denied",
+      "analytics_storage": "denied",
+      "wait_for_update": 500
+    });
+
+    // Global helper bridge to dynamically feed user choices from your Consent Banner into GPT
+    window.updateGptConsentState = function(consentedToAds, consentedToAnalytics) {
+      var statusAds = consentedToAds ? "granted" : "denied";
+      var statusAnalytics = consentedToAnalytics ? "granted" : "denied";
+
+      gtag("consent", "update", {
+        "ad_storage": statusAds,
+        "ad_user_data": statusAds,
+        "ad_personalization": statusAds,
+        "analytics_storage": statusAnalytics
+      });
+
+      if (window.googletag && typeof googletag.pubads === "function") {
+        googletag.cmd.push(function() {
+          googletag.pubads().refresh();
+        });
+      }
+      console.log("[GPT Consent Engine] Signals updated: Ads (" + statusAds + "), Analytics (" + statusAnalytics + ")");
+    };
+  </script>
+
+  <!-- 2. Async Secure Google Publisher Tag Library -->
+  <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+
+  <!-- 3. Enterprise-Grade Ad Architecture with Interstitial, Anchor, & Fluid Support -->
+  <script>
+    window.googletag = window.googletag || {cmd: []};
+
+    // Slot Registry & Monitored State Namespace
+    window.gptTrackingEngine = {
+      refreshableSlots: [],
+      refreshIntervalMs: 60000,
+      isProcessingRefresh: false,
+      viewableSlotTracker: {},
+      viewabilityObserver: null,
+
+      destroyEngine: function() {
+        if (this.viewabilityObserver) this.viewabilityObserver.disconnect();
+        if (window.googletag && typeof googletag.destroySlots === "function") {
+          googletag.cmd.push(function() { googletag.destroySlots(); });
+        }
+        console.log("[GPT Engine] Complete teardown executed. Registry cleared.");
+      }
+    };
+
+    googletag.cmd.push(function() {
+      /* =========================
+          SIZE MAPPINGS (FLUID ENABLED)
+         ========================== */
+      var mappingTop = googletag.sizeMapping()
+        .addSize([1024, 0], [[970, 90], [728, 90], [970, 66], [320, 100], [300, 250], [366, 280], [336, 280], [320, 480], [320, 50], [300, 100], [300, 50], [160, 600], [120, 600], "fluid"])
+        .addSize([768, 0], [[728, 90], [300, 250], [300, 100], "fluid"])
+        .addSize([0, 0], [[300, 250], [250, 250], [336, 280], [320, 480], [366, 280],  [200, 200], [320, 50], "fluid"])
+        .build();
+
+      var mappingBody = googletag.sizeMapping()
+        .addSize([768, 0], [[728, 90], [300, 250], "fluid"])
+        .addSize([0, 0], [[300, 250], [250, 250], [320, 50], "fluid"])
+        .build();
+
+      /* =========================
+          SPECIAL FORMATS (Anchor & Interstitial)
+         ========================== */
+      // 1. Bottom Anchor / Sticky Ad
+      var anchorSlot = googletag.defineOutOfPageSlot(
+        "/23043164651/globeoptimiser/globeoptimiser_anchor",
+        googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+      );
+      if (anchorSlot) {
+        anchorSlot.addService(googletag.pubads());
+      }
+
+      // 2. Web Interstitial Ad
+      var interstitialSlot = googletag.defineOutOfPageSlot(
+        "/23043164651/globeoptimiser/globeoptimiser_intersitital",
+        googletag.enums.OutOfPageFormat.INTERSTITIAL
+      );
+      if (interstitialSlot) {
+        interstitialSlot.addService(googletag.pubads());
+      }
+
+      /* =========================
+          STANDARD BANNER SLOT REGISTRY
+         ========================== */
+      var slotsToRegister = [
+        {
+          path: "/23043164651/globeoptimiser_sidebar2",
+          sizes: [[160, 600], [120, 600], "fluid"],
+          div: "div-gpt-ad-1789999691219-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_sidebar1",
+          sizes: [[160, 600], [120, 600], "fluid"],
+          div: "div-gpt-ad-1789999580078-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner1",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1789998229083-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner2",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790267192349-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner3",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790267487184-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner4",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790268002577-0",
+          type: "top"
+        }
+      ];
+
+      slotsToRegister.forEach(function(config) {
+        var definedSlot = googletag.defineSlot(config.path, config.sizes, config.div)
+          .defineSizeMapping(config.type === "top" ? mappingTop : mappingBody)
+          .addService(googletag.pubads());
+
+        window.gptTrackingEngine.refreshableSlots.push(definedSlot);
+      });
+
+      /* =========================
+          EVENT LISTENERS
+         ========================== */
+      googletag.pubads().addEventListener("slotRenderEnded", function(event) {
+        window.gptTrackingEngine.isProcessingRefresh = false;
+        console.log("[GPT Debug Hook] Render Ended:", event.slot.getSlotElementId(), "| Empty:", event.isEmpty, "| Dispatched Size:", event.size);
+      });
+
+      googletag.pubads().addEventListener("impressionViewable", function(event) {
+        console.log("[GPT Debug Hook] Active View Confirmed - Ad visible to user:", event.slot.getSlotElementId());
+      });
+
+      var visibilityTimers = {};
+      googletag.pubads().addEventListener("slotVisibilityChanged", function(event) {
+        var slotId = event.slot.getSlotElementId();
+        if (visibilityTimers[slotId]) clearTimeout(visibilityTimers[slotId]);
+
+        visibilityTimers[slotId] = setTimeout(function() {
+          console.log("[GPT Debug Hook] Real-Time Visibility Change:", slotId, "->", event.inViewPercentage + "%");
+        }, 150);
+      });
+
+      /* =========================
+          GPT SYSTEM CONFIGURATIONS
+         ========================== */
+      googletag.pubads().enableSingleRequest();
+
+      googletag.pubads().enableLazyLoad({
+        fetchMarginPercent: 200,
+        renderMarginPercent: 50,
+        mobileScaling: 2.0
+      });
+
+      googletag.pubads().setTargeting("sections", ["all"]);
+      googletag.pubads().collapseEmptyDivs(true);
+      googletag.pubads().enableVideoAds();
+      googletag.enableServices();
+    });
+
+    /* =========================
+        INTERSECTION OBSERVER & REFRESH LOGIC
+       ========================== */
+    document.addEventListener("DOMContentLoaded", function() {
+      if ("IntersectionObserver" in window) {
+        window.gptTrackingEngine.viewabilityObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            var id = entry.target.id;
+            if (entry.intersectionRatio >= 0.5) {
+              if (!window.gptTrackingEngine.viewableSlotTracker[id]) {
+                window.gptTrackingEngine.viewableSlotTracker[id] = Date.now();
+              }
+            } else {
+              window.gptTrackingEngine.viewableSlotTracker[id] = null;
+            }
+          });
+        }, { threshold: [0.0, 0.5, 1.0] });
+
+        var slotDivIds = [
+          "div-gpt-ad-1789999691219-0",
+          "div-gpt-ad-1789999580078-0",
+          "div-gpt-ad-1789998229083-0",
+          "div-gpt-ad-1790267192349-0",
+          "div-gpt-ad-1790267487184-0",
+          "div-gpt-ad-1790268002577-0"
+        ];
+
+        slotDivIds.forEach(function(divId) {
+          var el = document.getElementById(divId);
+          if (el) window.gptTrackingEngine.viewabilityObserver.observe(el);
+        });
+      }
+
+      // Auto-Refresh Engine
+      setInterval(function() {
+        if (document.hidden || window.gptTrackingEngine.isProcessingRefresh) return;
+
+        if (window.googletag && googletag.apiReady) {
+          var slotsEligibleForRefresh = window.gptTrackingEngine.refreshableSlots.filter(function(slot) {
+            var divId = slot.getSlotElementId();
+            var visibleSince = window.gptTrackingEngine.viewableSlotTracker[divId];
+            return visibleSince && (Date.now() - visibleSince >= 1000);
+          });
+
+          if (slotsEligibleForRefresh.length > 0) {
+            console.log("[GPT Engine] Viewable Refresh Throttling Gate Passed. Refreshing slots:", slotsEligibleForRefresh.length);
+            window.gptTrackingEngine.isProcessingRefresh = true;
+            googletag.pubads().refresh(slotsEligibleForRefresh);
+          }
+        }
+      }, window.gptTrackingEngine.refreshIntervalMs);
+    });
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="globeoptimiser-api-base" content="">
   <title>Free Online Video Watermark Tool — globeoptimiser.com</title>
@@ -12,74 +249,295 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0f19;
-      --card-bg: rgba(22, 30, 49, 0.7);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --accent: #8b5cf6;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: rgba(15, 23, 42, 0.08);
+      --border-hover: rgba(15, 23, 42, 0.16);
+      --border-dashed: #93c5fd;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-heading: #1e293b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: rgba(37, 99, 235, 0.08);
+      --accent-mint: #10b981;
+      --accent-blue: #2563eb;
       --radius: 16px;
+      --radius-sm: 8px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.25s ease;
+      --shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.03);
+    }
+    [data-theme="dark"] {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --border-dashed: rgba(147, 197, 253, 0.35);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-heading: #f8fafc;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-soft: rgba(59, 130, 246, 0.15);
+      --shadow-card: 0 20px 45px -12px rgba(0, 0, 0, 0.5);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.6;
-      min-height: 100vh; display: flex; flex-direction: column;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
     a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
     
-    header { background: var(--card-bg); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-    .header-container { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
-    .logo-container { display: flex; align-items: center; gap: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.25rem; }
-    .logo-icon { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 6px; border-radius: 10px; display: flex; }
-    .logo-text span { color: var(--primary); }
-
-    nav.header-nav { display: flex; align-items: center; gap: 1.5rem; }
-    .nav-link { color: var(--text); font-weight: 500; font-size: 0.95rem; }
-    .nav-item.dropdown { position: relative; }
-    .dropdown-toggle { background: none; border: none; color: var(--text); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.95rem; }
-    .dropdown-menu {
-      display: none; position: absolute; top: 100%; left: 0;
-      background: var(--card-bg); backdrop-filter: blur(16px);
-      border: 1px solid var(--border); border-radius: 12px;
-      padding: 0.75rem; min-width: 260px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-      margin-top: 0.5rem; z-index: 110;
+    header {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
     }
-    .nav-item.dropdown:hover .dropdown-menu { display: block; }
-    .dropdown-column a { display: block; padding: 0.5rem 0.75rem; border-radius: 8px; color: var(--text); }
-    .dropdown-column a:hover { background: rgba(59, 130, 246, 0.1); text-decoration: none; }
-    .dropdown-column strong { display: block; font-size: 0.9rem; }
-    .dropdown-column span { font-size: 0.75rem; color: var(--text-muted); }
-
-    .main-container { max-width: 1000px; margin: 2.5rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
-    .tool-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 2.5rem; backdrop-filter: blur(12px);
-      margin-bottom: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    .header-container {
+      max-width: 1200px; margin: 0 auto; padding: 0.75rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    h1 { font-family: 'Outfit', sans-serif; font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; }
-    h1 mark { background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .subtitle { color: var(--text-muted); margin-bottom: 2rem; font-size: 1.05rem; }
+    .logo-container { display: flex; align-items: center; gap: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.25rem; text-decoration: none; color: inherit; }
+    .logo-container:hover { text-decoration: none; }
+    .logo-ring-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      transition: transform var(--transition-fast);
+    }
+    .logo-container:hover .logo-ring-icon {
+      transform: rotate(30deg);
+    }
+    .logo-text span { color: var(--text-muted); font-weight: 500; }
+    
+    nav.header-nav { display: flex; align-items: center; gap: 6px; }
+    .nav-link {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition-fast);
+      font-family: 'Outfit', sans-serif;
+    }
+    .nav-link:hover { color: var(--text); background: rgba(0,0,0,0.04); text-decoration: none; }
+    .nav-link.active { color: var(--primary); background: var(--primary-soft); text-decoration: none; }
 
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition-fast);
+    }
+    .pill-badge:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+    .pill-count {
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
+    /* Ambient Organic Waves Backdrop */
+    .hero-backdrop-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 480px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-waves-svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .main-container { max-width: 960px; margin: 1.5rem auto 4rem; padding: 0 1.5rem; flex: 1; width: 100%; position: relative; z-index: 1; }
+    
+    /* Hero Headline */
+    .hero-converter-header {
+      text-align: center;
+      margin: 16px auto 32px;
+      max-width: 760px;
+    }
+    .hero-converter-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .hero-converter-header .converter-subtitle {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    /* Elevated White Card */
+    .converter-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 36px 32px 42px;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    /* Dashed Inner Drop Box */
     .dropzone-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-    .dropzone {
-      border: 2px dashed var(--primary); border-radius: 14px;
-      padding: 2rem 1.5rem; text-align: center; cursor: pointer;
-      background: rgba(59, 130, 246, 0.03); transition: all 0.2s ease;
+    .converter-dropzone-box {
+      border: 2px dashed var(--border-dashed);
+      border-radius: 18px;
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(248, 250, 252, 0.5);
+      transition: all var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    .dropzone:hover { background: rgba(59, 130, 246, 0.08); }
+    [data-theme="dark"] .converter-dropzone-box {
+      background: rgba(15, 19, 28, 0.5);
+    }
+    .converter-dropzone-box:hover, .converter-dropzone-box.dragover {
+      border-color: var(--accent-blue);
+      background: rgba(240, 249, 255, 0.7);
+    }
+
+    .dropzone-main-label {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0;
+    }
 
     .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
     .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
-    label { font-weight: 600; font-size: 0.9rem; }
+    label { font-weight: 600; font-size: 0.9rem; color: var(--text-heading); }
     select {
-      background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.02); border: 1px solid var(--border);
       color: var(--text); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.95rem; width: 100%;
+    }
+    [data-theme="dark"] select {
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .btn-primary {
+      background: #1e40af;
+      color: white; border: none; padding: 0.9rem 2rem; border-radius: 12px;
+      font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; transition: all var(--transition-fast);
+      box-shadow: 0 6px 18px rgba(30, 64, 175, 0.28);
+    }
+    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(30, 64, 175, 0.38); }
+
+    /* 6-Card Feature Grid */
+    .converter-features-section {
+      width: 100%;
+      margin-top: 48px;
+      padding-top: 10px;
+    }
+    .converter-features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px 24px;
+    }
+    @media (max-width: 960px) {
+      .converter-features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .converter-features-grid { grid-template-columns: 1fr; gap: 48px 16px; }
+      .hero-converter-header h1 { font-size: 2.1rem; }
+      .converter-card { padding: 24px 18px 36px; }
+    }
+    .converter-feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 42px 26px 28px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+    .converter-feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 35px -6px rgba(15, 23, 42, 0.08);
+      border-color: var(--border-hover);
+    }
+    .feature-icon-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 8px 18px -2px rgba(15, 23, 42, 0.08);
+      display: grid;
+      place-items: center;
+      position: absolute;
+      top: -29px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: transform var(--transition-fast);
+    }
+    [data-theme="dark"] .feature-icon-badge {
+      background: #1e293b;
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 18px -2px rgba(0, 0, 0, 0.4);
+    }
+    .converter-feature-card:hover .feature-icon-badge {
+      transform: translateX(-50%) translateY(-2px);
+    }
+    .badge-green { color: #10b981; }
+    .badge-blue { color: #2563eb; }
+    .badge-teal { color: #0d9488; }
+    .badge-indigo { color: #6366f1; }
+
+    .converter-feature-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 12px;
+    }
+    .converter-feature-card p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.55;
+      margin: 0;
+    }
       background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white; border: none; padding: 0.9rem 2rem; border-radius: 10px;
       font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; transition: opacity 0.2s;
@@ -88,64 +546,169 @@
 
     footer { background: var(--card-bg); border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
     footer a { color: var(--text-muted); margin: 0 0.5rem; }
-  </style>
+  
+    .app-layout-wrapper {
+      position: relative;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .ad-slot {
+      background: var(--surface-soft, rgba(22, 28, 38, 0.9));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+      border-radius: var(--radius, 12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      transition: all 0.2s ease;
+      color: var(--text-muted, #94a3b8);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .ad-slot:hover {
+      border-color: var(--border-hover, rgba(255, 255, 255, 0.15));
+    }
+
+    .ad-label {
+      position: absolute;
+      top: 6px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted, #94a3b8);
+      opacity: 0.5;
+      z-index: 1;
+    }
+
+    .ad-leaderboard {
+      width: 100%;
+      max-width: 970px;
+      min-height: 90px;
+      margin: 0 auto 24px;
+    }
+
+    .ad-sidebar {
+      width: 160px;
+      min-height: 600px;
+      position: absolute;
+      top: 0;
+      z-index: 10;
+      display: none;
+    }
+
+    .ad-sidebar:first-of-type {
+      right: calc(100% + 20px);
+    }
+
+    .ad-sidebar:last-of-type {
+      left: calc(100% + 20px);
+    }
+
+    @media (min-width: 1360px) {
+      .ad-sidebar {
+        display: flex;
+      }
+    }
+</style>
 </head>
 <body>
   <header>
     <div class="header-container">
       <a href="/" class="logo-container">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        <div class="logo-ring-icon">
+          <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
+            <defs>
+              <linearGradient id="logoArcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06b6d4"/>
+                <stop offset="50%" stop-color="#2563eb"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+            </defs>
+            <circle cx="18" cy="18" r="14" stroke="url(#logoArcGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="72 16" />
+            <circle cx="18" cy="18" r="4.5" fill="#2563eb" />
+          </svg>
         </div>
-        <div class="logo-text">globe<span>optimiser.com</span></div>
+        <div class="logo-text">GLOBE<span>OPTIMISER</span></div>
       </a>
       <nav class="header-nav">
-        <div class="nav-item dropdown">
-          <button class="dropdown-toggle" type="button">Video Tools ▼</button>
-          <div class="dropdown-menu">
-            <div class="dropdown-column">
-              <a href="/compress-video"><strong>Video Compressor</strong><span>Compress MP4 & WebM file sizes</span></a>
-              <a href="/resize-video"><strong>Video Resizer</strong><span>Scale resolution & canvas</span></a>
-              <a href="/convert-video"><strong>Video Converter</strong><span>Convert MP4, WebM & GIF</span></a>
-              <a href="/watermark-video"><strong>Video Watermark</strong><span>Stamp logos on videos</span></a>
-            </div>
-          </div>
-        </div>
-        <div class="nav-item dropdown">
-          <button class="dropdown-toggle" type="button">Image Tools ▼</button>
-          <div class="dropdown-menu">
-            <div class="dropdown-column">
-              <a href="/compress-image"><strong>Image Compressor</strong><span>Shrink image KB limits</span></a>
-              <a href="/resize-image"><strong>Image Resizer</strong><span>Bulk resize banner dimensions</span></a>
-              <a href="/convert-image"><strong>Image Converter</strong><span>Convert PNG, JPG, WebP</span></a>
-              <a href="/watermark-image"><strong>Image Watermark</strong><span>Overlay logo watermarks</span></a>
-            </div>
-          </div>
-        </div>
-        <a href="/blog" class="nav-link">Blog</a>
+        <a href="/" class="nav-link">Convert images</a>
+        <a href="/converter" class="nav-link">File Converter</a>
+        <a href="/compress-video" class="nav-link">Compress video</a>
+        <a href="/convert-video" class="nav-link">Convert video</a>
+        <a href="/resize-video" class="nav-link">Resize video</a>
+        <a href="/about" class="nav-link">Help</a>
       </nav>
+
     </div>
   </header>
 
-  <main class="main-container">
-    <section class="tool-card">
-      <h1>Free Online <mark>Video Watermark Tool</mark></h1>
-      <p class="subtitle">Overlay your custom brand logo onto videos. Protect content from unauthorized re-uploads on TikTok, Reels, and YouTube.</p>
+  <!-- Ambient Organic Waves Backdrop with Floating Media Icons -->
+  <div class="hero-backdrop-container" aria-hidden="true">
+    <svg class="hero-waves-svg" viewBox="0 0 1440 480" fill="none" preserveAspectRatio="none">
+      <path d="M0,160 C320,280 480,80 800,180 C1120,280 1280,100 1440,160 L1440,0 L0,0 Z" fill="url(#heroWaveGrad1)" opacity="0.6"/>
+      <path d="M0,230 C360,110 640,310 960,170 C1200,70 1360,230 1440,170 L1440,0 L0,0 Z" fill="url(#heroWaveGrad2)" opacity="0.45"/>
+      <defs>
+        <linearGradient id="heroWaveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e0e7ff" stop-opacity="0.8"/>
+          <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#f0fdf4" stop-opacity="0.3"/>
+        </linearGradient>
+        <linearGradient id="heroWaveGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ede9fe" stop-opacity="0.7"/>
+          <stop offset="60%" stop-color="#e0f2fe" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#dbeafe" stop-opacity="0.25"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
 
+  <main class="main-container">
+    <section class="hero-converter-header">
+      <h1>Video Watermark</h1>
+      <p class="converter-subtitle">Overlay your custom brand logo onto videos</p>
+    </section>
+
+    <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_banner1 -->
+      <div id="div-gpt-ad-1789998229083-0" style="min-width: 200px; min-height: 50px;">
+        <script>
+          googletag.cmd.push(function() { googletag.display("div-gpt-ad-1789998229083-0"); });
+        </script>
+      </div>
+    </div>
+
+    <div class="app-layout-wrapper">
+      <aside class="ad-slot ad-sidebar" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <!-- /23043164651/globeoptimiser_sidebar1 -->
+        <div id="div-gpt-ad-1789999580078-0" style="min-width: 120px; min-height: 600px;">
+          <script>
+            googletag.cmd.push(function() { googletag.display("div-gpt-ad-1789999580078-0"); });
+          </script>
+        </div>
+      </aside>
+
+    <section class="tool-card converter-card">
       <form id="videoWatermarkForm" enctype="multipart/form-data">
         <div class="dropzone-grid">
-          <div class="dropzone" id="videoDropzone">
-            <div style="font-size: 2rem;">📹</div>
-            <h4>1. Select Video Files</h4>
-            <p class="subtitle" style="margin: 0.5rem 0 0; font-size: 0.85rem;">MP4, WebM, MOV</p>
+          <div class="converter-dropzone-box dropzone" id="videoDropzone">
+            <div style="font-size: 2.2rem;">📹</div>
+            <h4 class="dropzone-main-label">1. Select Video Files</h4>
+            <p class="subtitle" style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">MP4, WebM, MOV</p>
             <input type="file" id="videoFileInput" name="banners" accept="video/mp4,video/webm,video/quicktime" multiple style="display: none;">
             <div id="videoFileList" style="margin-top: 0.5rem; color: var(--primary); font-weight: 600; font-size: 0.85rem;"></div>
           </div>
 
-          <div class="dropzone" id="logoDropzone">
-            <div style="font-size: 2rem;">🖼️</div>
-            <h4>2. Select Logo Image</h4>
-            <p class="subtitle" style="margin: 0.5rem 0 0; font-size: 0.85rem;">Transparent PNG or JPG</p>
+          <div class="converter-dropzone-box dropzone" id="logoDropzone">
+            <div style="font-size: 2.2rem;">🖼️</div>
+            <h4 class="dropzone-main-label">2. Select Logo Image</h4>
+            <p class="subtitle" style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">Transparent PNG, JPG or WebP</p>
             <input type="file" id="logoFileInput" name="logo" accept="image/png,image/jpeg,image/webp" style="display: none;">
             <div id="logoFileList" style="margin-top: 0.5rem; color: var(--accent); font-weight: 600; font-size: 0.85rem;"></div>
           </div>
@@ -168,16 +731,127 @@
       </form>
       <div id="statusMessage" style="margin-top: 1rem; font-weight: 600;"></div>
     </section>
+
+        <!-- Mid-Page In-Content Ad -->
+        <div class="ad-slot ad-in-content" aria-label="Advertisement" style="margin: 24px auto;">
+          <span class="ad-label">Advertisement</span>
+          <!-- /23043164651/globeoptimiser_banner3 -->
+          <div id="div-gpt-ad-1790267487184-0" style="min-width: 200px; min-height: 50px;">
+            <script>
+              googletag.cmd.push(function() { googletag.display("div-gpt-ad-1790267487184-0"); });
+            </script>
+          </div>
+        </div>
+
+        <!-- 6-Card Feature Grid matching screenshot -->
+        <section class="converter-features-section">
+          <div class="converter-features-grid">
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-green">
+                <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <polyline points="1 20 1 14 7 14"></polyline>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+              </div>
+              <h3>300+ formats supported</h3>
+              <p>We support high-compression video and audio conversions with precision control over bitrate and dimensions.</p>
+            </div>
+
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-blue">
+                <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <h3>Fast and easy</h3>
+              <p>Just drop your files on the page and click watermark. Fast, direct processing happens in seconds.</p>
+            </div>
+
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-teal">
+                <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                  <polyline points="16 16 12 12 8 16"></polyline>
+                  <line x1="12" y1="12" x2="12" y2="21"></line>
+                </svg>
+              </div>
+              <h3>In the browser & cloud</h3>
+              <p>Optimizations run locally with hardware acceleration so your bandwidth stays fast and uninterrupted.</p>
+            </div>
+
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-indigo">
+                <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+              </div>
+              <h3>Custom settings</h3>
+              <p>Fine-tune target sizes, resolutions, aspect ratios, and format conversions with flexible options.</p>
+            </div>
+
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-green">
+                <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <h3>Security guaranteed</h3>
+              <p>Your media files are strictly private. No unauthorized person ever has access to your media assets.</p>
+            </div>
+
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-blue">
+                <svg viewBox="0 0 24 24" width="26" height="26" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                  <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+              </div>
+              <h3>All devices supported</h3>
+              <p>Works across Mac, Windows, Linux, iOS, and Android with no software installation required.</p>
+            </div>
+          </div>
+        </section>
+
+      <aside class="ad-slot ad-sidebar" aria-label="Advertisement">
+        <span class="ad-label">Advertisement</span>
+        <!-- /23043164651/globeoptimiser_sidebar2 -->
+        <div id="div-gpt-ad-1789999691219-0" style="min-width: 120px; min-height: 600px;">
+          <script>
+            googletag.cmd.push(function() { googletag.display("div-gpt-ad-1789999691219-0"); });
+          </script>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bottom Leaderboard Ad -->
+    <div class="ad-slot ad-leaderboard" style="margin-bottom: 30px;" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_banner2 -->
+      <div id="div-gpt-ad-1790267192349-0" style="min-width: 200px; min-height: 50px;">
+        <script>
+          googletag.cmd.push(function() { googletag.display("div-gpt-ad-1790267192349-0"); });
+        </script>
+      </div>
+    </div>
+
   </main>
 
   <footer>
     <p>&copy; 2026 globeoptimiser.com. <a href="/about">About Us</a> | <a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a></p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
   <script>
-    const apiBaseMeta = document.querySelector('meta[name="globeoptimiser-api-base"]');
-    const resolvedApiBase = apiBaseMeta ? apiBaseMeta.content.trim().replace(/\/$/, '') : window.location.origin;
-
     const videoDropzone = document.getElementById('videoDropzone');
     const logoDropzone = document.getElementById('logoDropzone');
     const videoFileInput = document.getElementById('videoFileInput');
@@ -186,6 +860,37 @@
     const logoFileList = document.getElementById('logoFileList');
     const form = document.getElementById('videoWatermarkForm');
     const statusMessage = document.getElementById('statusMessage');
+
+    let ffmpegInstance = null;
+
+    async function getFFmpeg() {
+      if (ffmpegInstance && ffmpegInstance.isLoaded()) {
+        return ffmpegInstance;
+      }
+      if (typeof FFmpeg === 'undefined') {
+        throw new Error('FFmpeg WebAssembly library failed to load. Please check your internet connection.');
+      }
+      const { createFFmpeg } = FFmpeg;
+      ffmpegInstance = createFFmpeg({
+        log: true,
+        corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
+      });
+      statusMessage.style.color = 'var(--primary)';
+      statusMessage.textContent = 'Initializing client-side WebAssembly video engine... First load may take a few seconds.';
+      await ffmpegInstance.load();
+      return ffmpegInstance;
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
 
     videoDropzone.addEventListener('click', () => videoFileInput.click());
     logoDropzone.addEventListener('click', () => logoFileInput.click());
@@ -203,7 +908,8 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!videoFileInput.files.length) {
+      const files = Array.from(videoFileInput.files);
+      if (!files.length) {
         statusMessage.style.color = '#ef4444';
         statusMessage.textContent = 'Please select at least one video file.';
         return;
@@ -215,32 +921,43 @@
       }
 
       statusMessage.style.color = 'var(--primary)';
-      statusMessage.textContent = 'Stamping video watermark... Please wait.';
 
-      const formData = new FormData(form);
       try {
-        const response = await fetch(`${resolvedApiBase}/process`, {
-          method: 'POST',
-          body: formData,
-        });
+        const { fetchFile } = FFmpeg;
+        const ffmpeg = await getFFmpeg();
 
-        if (!response.ok) throw new Error('Video watermarking failed.');
+        const logoFile = logoFileInput.files[0];
+        const logoExt = logoFile.name.split('.').pop().toLowerCase() || 'png';
+        const logoName = `logo.${logoExt}`;
 
-        const blob = await response.blob();
-        const disposition = response.headers.get('content-disposition') || '';
-        const filenameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
-        const filename = filenameMatch ? filenameMatch[1].replace(/['"]/g, '') : 'globeoptimiser_watermarked_video.mp4';
+        ffmpeg.FS('writeFile', logoName, await fetchFile(logoFile));
 
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const sanitizeStem = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+          const ext = file.name.split('.').pop().toLowerCase() || 'mp4';
+          const inputName = `input_${i}.${ext}`;
+          const outputName = `watermarked_${sanitizeStem}.mp4`;
+
+          statusMessage.textContent = `[${i + 1}/${files.length}] Stamping watermark on "${file.name}" in browser...`;
+
+          ffmpeg.FS('writeFile', inputName, await fetchFile(file));
+
+          // Overlay watermark at bottom-right with padding
+          await ffmpeg.run('-i', inputName, '-i', logoName, '-filter_complex', '[1:v]scale=120:-1[logo];[0:v][logo]overlay=W-w-20:H-h-20', '-c:v', 'libx264', '-preset', 'fast', outputName);
+
+          const data = ffmpeg.FS('readFile', outputName);
+          const blob = new Blob([data.buffer], { type: 'video/mp4' });
+          downloadBlob(blob, outputName);
+
+          ffmpeg.FS('unlink', inputName);
+          ffmpeg.FS('unlink', outputName);
+        }
+
+        ffmpeg.FS('unlink', logoName);
 
         statusMessage.style.color = '#22c55e';
-        statusMessage.textContent = 'Video watermarking complete! Download started.';
+        statusMessage.textContent = 'Video watermarking complete! Download started automatically.';
       } catch (err) {
         statusMessage.style.color = '#ef4444';
         statusMessage.textContent = 'Error during video watermarking: ' + err.message;

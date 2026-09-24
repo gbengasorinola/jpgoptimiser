@@ -1,7 +1,244 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- 1. Google Consent Mode v2 Default Privacy Configuration Layer -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+
+    // Set privacy defaults immediately before any ad network processing calls fire
+    gtag("consent", "default", {
+      "ad_storage": "denied",
+      "ad_user_data": "denied",
+      "ad_personalization": "denied",
+      "analytics_storage": "denied",
+      "wait_for_update": 500
+    });
+
+    // Global helper bridge to dynamically feed user choices from your Consent Banner into GPT
+    window.updateGptConsentState = function(consentedToAds, consentedToAnalytics) {
+      var statusAds = consentedToAds ? "granted" : "denied";
+      var statusAnalytics = consentedToAnalytics ? "granted" : "denied";
+
+      gtag("consent", "update", {
+        "ad_storage": statusAds,
+        "ad_user_data": statusAds,
+        "ad_personalization": statusAds,
+        "analytics_storage": statusAnalytics
+      });
+
+      if (window.googletag && typeof googletag.pubads === "function") {
+        googletag.cmd.push(function() {
+          googletag.pubads().refresh();
+        });
+      }
+      console.log("[GPT Consent Engine] Signals updated: Ads (" + statusAds + "), Analytics (" + statusAnalytics + ")");
+    };
+  </script>
+
+  <!-- 2. Async Secure Google Publisher Tag Library -->
+  <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" crossorigin="anonymous"></script>
+
+  <!-- 3. Enterprise-Grade Ad Architecture with Interstitial, Anchor, & Fluid Support -->
+  <script>
+    window.googletag = window.googletag || {cmd: []};
+
+    // Slot Registry & Monitored State Namespace
+    window.gptTrackingEngine = {
+      refreshableSlots: [],
+      refreshIntervalMs: 60000,
+      isProcessingRefresh: false,
+      viewableSlotTracker: {},
+      viewabilityObserver: null,
+
+      destroyEngine: function() {
+        if (this.viewabilityObserver) this.viewabilityObserver.disconnect();
+        if (window.googletag && typeof googletag.destroySlots === "function") {
+          googletag.cmd.push(function() { googletag.destroySlots(); });
+        }
+        console.log("[GPT Engine] Complete teardown executed. Registry cleared.");
+      }
+    };
+
+    googletag.cmd.push(function() {
+      /* =========================
+          SIZE MAPPINGS (FLUID ENABLED)
+         ========================== */
+      var mappingTop = googletag.sizeMapping()
+        .addSize([1024, 0], [[970, 90], [728, 90], [970, 66], [320, 100], [300, 250], [366, 280], [336, 280], [320, 480], [320, 50], [300, 100], [300, 50], [160, 600], [120, 600], "fluid"])
+        .addSize([768, 0], [[728, 90], [300, 250], [300, 100], "fluid"])
+        .addSize([0, 0], [[300, 250], [250, 250], [336, 280], [320, 480], [366, 280],  [200, 200], [320, 50], "fluid"])
+        .build();
+
+      var mappingBody = googletag.sizeMapping()
+        .addSize([768, 0], [[728, 90], [300, 250], "fluid"])
+        .addSize([0, 0], [[300, 250], [250, 250], [320, 50], "fluid"])
+        .build();
+
+      /* =========================
+          SPECIAL FORMATS (Anchor & Interstitial)
+         ========================== */
+      // 1. Bottom Anchor / Sticky Ad
+      var anchorSlot = googletag.defineOutOfPageSlot(
+        "/23043164651/globeoptimiser/globeoptimiser_anchor",
+        googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+      );
+      if (anchorSlot) {
+        anchorSlot.addService(googletag.pubads());
+      }
+
+      // 2. Web Interstitial Ad
+      var interstitialSlot = googletag.defineOutOfPageSlot(
+        "/23043164651/globeoptimiser/globeoptimiser_intersitital",
+        googletag.enums.OutOfPageFormat.INTERSTITIAL
+      );
+      if (interstitialSlot) {
+        interstitialSlot.addService(googletag.pubads());
+      }
+
+      /* =========================
+          STANDARD BANNER SLOT REGISTRY
+         ========================== */
+      var slotsToRegister = [
+        {
+          path: "/23043164651/globeoptimiser_sidebar2",
+          sizes: [[160, 600], [120, 600], "fluid"],
+          div: "div-gpt-ad-1789999691219-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_sidebar1",
+          sizes: [[160, 600], [120, 600], "fluid"],
+          div: "div-gpt-ad-1789999580078-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner1",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1789998229083-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner2",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790267192349-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner3",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790267487184-0",
+          type: "top"
+        },
+        {
+          path: "/23043164651/globeoptimiser_banner4",
+          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          div: "div-gpt-ad-1790268002577-0",
+          type: "top"
+        }
+      ];
+
+      slotsToRegister.forEach(function(config) {
+        var definedSlot = googletag.defineSlot(config.path, config.sizes, config.div)
+          .defineSizeMapping(config.type === "top" ? mappingTop : mappingBody)
+          .addService(googletag.pubads());
+
+        window.gptTrackingEngine.refreshableSlots.push(definedSlot);
+      });
+
+      /* =========================
+          EVENT LISTENERS
+         ========================== */
+      googletag.pubads().addEventListener("slotRenderEnded", function(event) {
+        window.gptTrackingEngine.isProcessingRefresh = false;
+        console.log("[GPT Debug Hook] Render Ended:", event.slot.getSlotElementId(), "| Empty:", event.isEmpty, "| Dispatched Size:", event.size);
+      });
+
+      googletag.pubads().addEventListener("impressionViewable", function(event) {
+        console.log("[GPT Debug Hook] Active View Confirmed - Ad visible to user:", event.slot.getSlotElementId());
+      });
+
+      var visibilityTimers = {};
+      googletag.pubads().addEventListener("slotVisibilityChanged", function(event) {
+        var slotId = event.slot.getSlotElementId();
+        if (visibilityTimers[slotId]) clearTimeout(visibilityTimers[slotId]);
+
+        visibilityTimers[slotId] = setTimeout(function() {
+          console.log("[GPT Debug Hook] Real-Time Visibility Change:", slotId, "->", event.inViewPercentage + "%");
+        }, 150);
+      });
+
+      /* =========================
+          GPT SYSTEM CONFIGURATIONS
+         ========================== */
+      googletag.pubads().enableSingleRequest();
+
+      googletag.pubads().enableLazyLoad({
+        fetchMarginPercent: 200,
+        renderMarginPercent: 50,
+        mobileScaling: 2.0
+      });
+
+      googletag.pubads().setTargeting("sections", ["all"]);
+      googletag.pubads().collapseEmptyDivs(true);
+      googletag.pubads().enableVideoAds();
+      googletag.enableServices();
+    });
+
+    /* =========================
+        INTERSECTION OBSERVER & REFRESH LOGIC
+       ========================== */
+    document.addEventListener("DOMContentLoaded", function() {
+      if ("IntersectionObserver" in window) {
+        window.gptTrackingEngine.viewabilityObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            var id = entry.target.id;
+            if (entry.intersectionRatio >= 0.5) {
+              if (!window.gptTrackingEngine.viewableSlotTracker[id]) {
+                window.gptTrackingEngine.viewableSlotTracker[id] = Date.now();
+              }
+            } else {
+              window.gptTrackingEngine.viewableSlotTracker[id] = null;
+            }
+          });
+        }, { threshold: [0.0, 0.5, 1.0] });
+
+        var slotDivIds = [
+          "div-gpt-ad-1789999691219-0",
+          "div-gpt-ad-1789999580078-0",
+          "div-gpt-ad-1789998229083-0",
+          "div-gpt-ad-1790267192349-0",
+          "div-gpt-ad-1790267487184-0",
+          "div-gpt-ad-1790268002577-0"
+        ];
+
+        slotDivIds.forEach(function(divId) {
+          var el = document.getElementById(divId);
+          if (el) window.gptTrackingEngine.viewabilityObserver.observe(el);
+        });
+      }
+
+      // Auto-Refresh Engine
+      setInterval(function() {
+        if (document.hidden || window.gptTrackingEngine.isProcessingRefresh) return;
+
+        if (window.googletag && googletag.apiReady) {
+          var slotsEligibleForRefresh = window.gptTrackingEngine.refreshableSlots.filter(function(slot) {
+            var divId = slot.getSlotElementId();
+            var visibleSince = window.gptTrackingEngine.viewableSlotTracker[divId];
+            return visibleSince && (Date.now() - visibleSince >= 1000);
+          });
+
+          if (slotsEligibleForRefresh.length > 0) {
+            console.log("[GPT Engine] Viewable Refresh Throttling Gate Passed. Refreshing slots:", slotsEligibleForRefresh.length);
+            window.gptTrackingEngine.isProcessingRefresh = true;
+            googletag.pubads().refresh(slotsEligibleForRefresh);
+          }
+        }
+      }, window.gptTrackingEngine.refreshIntervalMs);
+    });
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="globeoptimiser-api-base" content="">
   <title>globeoptimiser.com - File Converter</title>
@@ -10,22 +247,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Deep Zinc/Slate brand palette (Professional SaaS dark mode) */
-      --bg: #090a10;
-      --surface: rgba(15, 19, 28, 0.7);
-      --surface-soft: rgba(22, 28, 38, 0.9);
-      --surface-hover: rgba(30, 39, 53, 0.6);
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: rgba(255, 255, 255, 0.06);
-      --border-hover: rgba(255, 255, 255, 0.12);
-      --border-focus: rgba(16, 185, 129, 0.4);
+      /* Clean Light Converter Canvas (matches converter.com aesthetic) */
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --surface-hover: #f1f5f9;
+      --text: #0f172a;
+      --text-heading: #1e293b;
+      --text-muted: #64748b;
+      --border: rgba(15, 23, 42, 0.08);
+      --border-hover: rgba(15, 23, 42, 0.16);
+      --border-dashed: #93c5fd;
+      --border-focus: rgba(37, 99, 235, 0.5);
       
-      /* Primary Branding: Premium Emerald Accent */
-      --primary: #10b981;
-      --primary-hover: #059669;
-      --primary-soft: rgba(16, 185, 129, 0.08);
-      --primary-gradient: linear-gradient(135deg, #10b981, #059669);
+      /* Primary Branding: Royal Blue & Mint Accents */
+      --primary: #1e40af;
+      --primary-hover: #1d4ed8;
+      --primary-soft: rgba(30, 64, 175, 0.08);
+      --primary-gradient: linear-gradient(135deg, #06b6d4, #2563eb);
+      --accent-blue: #2563eb;
+      --accent-mint: #10b981;
+      --accent-mint-soft: rgba(16, 185, 129, 0.1);
       
       --purple: #8b5cf6;
       --purple-soft: rgba(139, 92, 246, 0.08);
@@ -34,34 +276,47 @@
       --success: #10b981;
       --success-soft: rgba(16, 185, 129, 0.08);
       
-      /* Clean Visual Shadows & Radii */
+      /* Elevated Shadows & Radii */
       --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      --shadow-glow: 0 0 24px rgba(16, 185, 129, 0.03);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 15px 35px -5px rgba(15, 23, 42, 0.06), 0 5px 15px rgba(15, 23, 42, 0.03);
+      --shadow-card: 0 12px 32px -8px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+      --shadow-glow: 0 0 24px rgba(37, 99, 235, 0.12);
       
-      --radius-sm: 6px;
-      --radius: 10px;
-      --radius-lg: 16px;
+      --radius-sm: 8px;
+      --radius: 12px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
       --max-width: 1200px;
       
       --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
       --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    [data-theme="light"] {
-      --bg: #f8fafc;
-      --surface: rgba(255, 255, 255, 0.75);
-      --surface-soft: rgba(241, 245, 249, 0.95);
-      --surface-hover: rgba(226, 232, 240, 0.8);
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --border: rgba(15, 23, 42, 0.08);
-      --border-hover: rgba(15, 23, 42, 0.15);
-      --border-focus: rgba(16, 185, 129, 0.5);
+    [data-theme="dark"] {
+      --bg: #090a10;
+      --surface: rgba(15, 19, 28, 0.88);
+      --surface-soft: rgba(22, 28, 38, 0.95);
+      --surface-hover: rgba(30, 39, 53, 0.7);
+      --text: #f8fafc;
+      --text-heading: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --border-dashed: rgba(147, 197, 253, 0.4);
+      --border-focus: rgba(16, 185, 129, 0.4);
       
-      --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.04), 0 4px 6px -4px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-      --shadow-glow: 0 0 24px rgba(16, 185, 129, 0.01);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-soft: rgba(59, 130, 246, 0.15);
+      --primary-gradient: linear-gradient(135deg, #06b6d4, #3b82f6);
+      --accent-blue: #60a5fa;
+      --accent-mint: #34d399;
+      --accent-mint-soft: rgba(52, 211, 153, 0.15);
+      
+      --shadow-lg: 0 15px 35px -5px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.3);
+      --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 24px rgba(59, 130, 246, 0.15);
       
       --purple-soft: rgba(139, 92, 246, 0.04);
       --danger-soft: rgba(244, 63, 94, 0.04);
@@ -434,13 +689,13 @@
 
     .ad-leaderboard {
       width: 100%;
-      height: 72px;
-      margin-bottom: 8px;
+      min-height: 90px;
+      margin-bottom: 16px;
     }
 
     .ad-sidebar {
-      width: 120px;
-      height: 520px;
+      width: 160px;
+      min-height: 600px;
       position: absolute;
       top: 0;
       z-index: 10;
@@ -1025,20 +1280,333 @@
         text-align: center;
       }
     }
+
+    /* =======================================================
+       CONVERTER.COM DESIGN SYSTEM OVERLAYS (SCREENSHOT ALIGNMENT)
+       ======================================================= */
+    
+    /* Background Organic Waves */
+    .hero-backdrop-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 480px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-waves-svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .floating-shape-icon {
+      position: absolute;
+      color: #64748b;
+      opacity: 0.18;
+      pointer-events: none;
+      animation: floatSubtle 7s ease-in-out infinite alternate;
+    }
+    [data-theme="dark"] .floating-shape-icon {
+      opacity: 0.12;
+      color: #94a3b8;
+    }
+    @keyframes floatSubtle {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-10px) rotate(3deg); }
+    }
+
+    /* Hero Headline & Subtitle */
+    .hero-converter-header {
+      text-align: center;
+      margin: 16px auto 32px;
+      max-width: 760px;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-converter-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .hero-converter-header .converter-subtitle {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    /* Elevated White Uploader Card */
+    .converter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 36px 32px 42px;
+      position: relative;
+      z-index: 2;
+      transition: all var(--transition-normal);
+    }
+    [data-theme="light"] .converter-card {
+      background: #ffffff;
+      border-color: rgba(226, 232, 240, 0.85);
+      box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.07), 0 2px 6px rgba(15, 23, 42, 0.03);
+    }
+
+    /* Dashed Inner Drop Box */
+    .converter-dropzone-box {
+      border: 2px dashed var(--border-dashed);
+      border-radius: 18px;
+      padding: 56px 24px 50px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(248, 250, 252, 0.5);
+      transition: all var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+    [data-theme="dark"] .converter-dropzone-box {
+      background: rgba(15, 19, 28, 0.5);
+      border-color: rgba(147, 197, 253, 0.35);
+    }
+    .converter-dropzone-box:hover, .converter-dropzone-box.dragover {
+      border-color: var(--accent-blue);
+      background: rgba(240, 249, 255, 0.7);
+    }
+    [data-theme="dark"] .converter-dropzone-box:hover, [data-theme="dark"] .converter-dropzone-box.dragover {
+      background: rgba(30, 58, 138, 0.15);
+      border-color: var(--accent-blue);
+    }
+
+    /* Green Circular Plus Icon */
+    .dropzone-plus-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-mint);
+      background: var(--surface);
+      color: var(--accent-mint);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.14);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      margin-bottom: 2px;
+    }
+    .converter-dropzone-box:hover .dropzone-plus-circle {
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.28);
+    }
+    .dropzone-main-label {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Anchored Dual Pill Buttons */
+    .dropzone-pill-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: -24px;
+      position: relative;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+    .btn-pill {
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 13px 26px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+      text-decoration: none;
+    }
+    .btn-pill-primary {
+      background: #1e40af;
+      box-shadow: 0 6px 18px rgba(30, 64, 175, 0.35);
+    }
+    .btn-pill-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(30, 64, 175, 0.45);
+    }
+    .btn-pill-secondary {
+      background: #1e3a8a;
+      box-shadow: 0 6px 18px rgba(30, 58, 138, 0.28);
+    }
+    .btn-pill-secondary:hover {
+      background: #172554;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(30, 58, 138, 0.38);
+    }
+
+    /* 6-Card Feature Grid */
+    .converter-features-section {
+      width: 100%;
+      margin-top: 56px;
+      padding-top: 10px;
+    }
+    .converter-features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px 24px;
+    }
+    @media (max-width: 960px) {
+      .converter-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .converter-features-grid {
+        grid-template-columns: 1fr;
+        gap: 48px 16px;
+      }
+      .hero-converter-header h1 {
+        font-size: 2.1rem;
+      }
+      .converter-card {
+        padding: 24px 18px 36px;
+      }
+      .converter-dropzone-box {
+        padding: 40px 16px;
+      }
+    }
+    .converter-feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 42px 26px 28px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+    [data-theme="light"] .converter-feature-card {
+      background: #ffffff;
+      border-color: rgba(226, 232, 240, 0.85);
+      box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.04);
+    }
+    .converter-feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 35px -6px rgba(15, 23, 42, 0.08);
+      border-color: var(--border-hover);
+    }
+    .feature-icon-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 8px 18px -2px rgba(15, 23, 42, 0.08);
+      display: grid;
+      place-items: center;
+      position: absolute;
+      top: -29px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: transform var(--transition-fast);
+    }
+    [data-theme="dark"] .feature-icon-badge {
+      background: #1e293b;
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 18px -2px rgba(0, 0, 0, 0.4);
+    }
+    .converter-feature-card:hover .feature-icon-badge {
+      transform: translateX(-50%) translateY(-2px);
+    }
+    .badge-green { color: #10b981; }
+    .badge-blue { color: #2563eb; }
+    .badge-teal { color: #0d9488; }
+    .badge-indigo { color: #6366f1; }
+
+    .converter-feature-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-bottom: 12px;
+    }
+    .converter-feature-card p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* Logo Ring Icon */
+    .logo-ring-icon {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      transition: transform var(--transition-fast);
+    }
+    .logo-container:hover .logo-ring-icon {
+      transform: rotate(30deg);
+    }
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition-fast);
+    }
+    .pill-badge:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .pill-count {
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="header-container">
       <a href="/" class="logo-container">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-            <polyline points="21 15 16 10 5 21"></polyline>
+        <div class="logo-ring-icon">
+          <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
+            <defs>
+              <linearGradient id="logoArcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06b6d4"/>
+                <stop offset="50%" stop-color="#2563eb"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+            </defs>
+            <circle cx="18" cy="18" r="14" stroke="url(#logoArcGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="72 16" />
+            <circle cx="18" cy="18" r="4.5" fill="#2563eb" />
           </svg>
         </div>
-        <div class="logo-text">globe<span>optimiser.com</span></div>
+        <div class="logo-text">GLOBE<span>OPTIMISER</span></div>
       </a>
       <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -1048,19 +1616,18 @@
         </svg>
       </button>
       <nav class="header-nav" id="headerNav">
-        <a href="/" class="nav-link">Optimiser</a>
-        <a href="/converter" class="nav-link active">Converter</a>
-        <div class="nav-item dropdown" style="position: relative; display: inline-block;">
-          <a href="/compress-video" class="nav-link">Video Tools ▼</a>
-          <div class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; background: var(--card-bg, #161e31); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.75rem; min-width: 240px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 100;">
-            <a href="/compress-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Compressor</strong></a>
-            <a href="/resize-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Resizer</strong></a>
-            <a href="/convert-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Converter</strong></a>
-            <a href="/watermark-video" style="display: block; padding: 0.4rem 0.6rem; color: inherit;"><strong>Video Watermark</strong></a>
-          </div>
-        </div>
+        <a href="/" class="nav-link">Convert images</a>
+        <a href="/converter" class="nav-link active">File Converter</a>
+        <a href="/compress-video" class="nav-link">Compress video</a>
+        <a href="/convert-video" class="nav-link">Convert video</a>
+        <a href="/resize-video" class="nav-link">Resize video</a>
+        <a href="/about" class="nav-link">Help</a>
       </nav>
       <div class="header-actions">
+        <a href="#selectedFilesArea" class="pill-badge" id="myFilesPill">
+          <span>My Files</span>
+          <span class="pill-count" id="headerFileCount">0</span>
+        </a>
         <div class="theme-toggle-wrapper">
           <button class="theme-toggle" id="themeToggleBtn" type="button" aria-label="Choose theme" title="Choose theme mode">
             <svg id="themeIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -1085,137 +1652,259 @@
     </div>
   </header>
 
+  <!-- Ambient Organic Waves Backdrop with Floating Media Icons -->
+  <div class="hero-backdrop-container" aria-hidden="true">
+    <svg class="hero-waves-svg" viewBox="0 0 1440 480" fill="none" preserveAspectRatio="none">
+      <path d="M0,160 C320,280 480,80 800,180 C1120,280 1280,100 1440,160 L1440,0 L0,0 Z" fill="url(#heroWaveGrad1)" opacity="0.6"/>
+      <path d="M0,230 C360,110 640,310 960,170 C1200,70 1360,230 1440,170 L1440,0 L0,0 Z" fill="url(#heroWaveGrad2)" opacity="0.45"/>
+      <defs>
+        <linearGradient id="heroWaveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e0e7ff" stop-opacity="0.8"/>
+          <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#f0fdf4" stop-opacity="0.3"/>
+        </linearGradient>
+        <linearGradient id="heroWaveGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ede9fe" stop-opacity="0.7"/>
+          <stop offset="60%" stop-color="#e0f2fe" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#dbeafe" stop-opacity="0.25"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <!-- Subtle floating media icons from screenshot -->
+    <div class="floating-shape-icon" style="top: 70px; left: 7%;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+    </div>
+    <div class="floating-shape-icon" style="top: 140px; left: 22%;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+    </div>
+    <div class="floating-shape-icon" style="top: 90px; right: 24%;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    </div>
+    <div class="floating-shape-icon" style="top: 180px; right: 9%;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+    </div>
+    <div class="floating-shape-icon" style="top: 240px; left: 12%;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+    </div>
+    <div class="floating-shape-icon" style="top: 80px; right: 12%;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+    </div>
+  </div>
+
   <main class="main-container">
-    <section class="hero-section">
-      <h1>Convert Images & Video to <mark>Production Formats</mark></h1>
-      <p>Batch convert images and short clips, then download a single file or ZIP archive when processing completes.</p>
+    <section class="hero-converter-header">
+      <h1>File Converter</h1>
+      <p class="converter-subtitle">Convert your files to any format</p>
     </section>
 
     <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
       <span class="ad-label">Advertisement</span>
-      <span class="ad-placeholder">Top banner ad slot</span>
+      <!-- /23043164651/globeoptimiser_banner1 -->
+      <div id='div-gpt-ad-1789998229083-0' style='min-width: 200px; min-height: 50px;'>
+        <script>
+          googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789998229083-0'); });
+        </script>
+      </div>
     </div>
 
     <div class="app-layout-wrapper">
       <aside class="ad-slot ad-sidebar" aria-label="Advertisement">
         <span class="ad-label">Advertisement</span>
-        <span class="ad-placeholder">Left sidebar ad</span>
+        <!-- /23043164651/globeoptimiser_sidebar1 -->
+        <div id='div-gpt-ad-1789999580078-0' style='min-width: 120px; min-height: 600px;'>
+          <script>
+            googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789999580078-0'); });
+          </script>
+        </div>
       </aside>
 
       <div class="main-workspace-content">
-        <section class="app-workspace">
-          <div class="panel">
-            <div class="upload-container">
-              <div class="dropzone" id="fileDropzone">
-                <div class="dropzone-icon">
-                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                </div>
-                <h3>Drop files to convert</h3>
-                <p>Supports conversion for images and short video formats.</p>
-                <div class="dropzone-formats">
-                  <span class="format-pill">PNG</span>
-                  <span class="format-pill">JPG</span>
-                  <span class="format-pill">WEBP</span>
-                  <span class="format-pill">BMP</span>
-                  <span class="format-pill">TIFF</span>
-                  <span class="format-pill">GIF</span>
-                  <span class="format-pill">MP4</span>
-                  <span class="format-pill">WEBM</span>
-                </div>
-                <button class="btn-select" id="selectFilesBtn" type="button" style="margin-top: 6px;">Select Files</button>
-                <input type="file" class="file-input" id="fileInput" multiple accept="image/*,video/mp4,video/webm,.mp4,.webm">
-              </div>
-
-              <div class="selected-files-area" id="selectedFilesArea" style="display: none;">
-                <div class="file-list-header">
-                  <h4>Files</h4>
-                  <span id="fileCountBadge">0 files</span>
-                </div>
-                <div class="file-list" id="fileList"></div>
-              </div>
+        <!-- Elevated Dropzone Card matching converter.com -->
+        <div class="converter-card">
+          <div class="converter-dropzone-box" id="fileDropzone">
+            <div class="dropzone-plus-circle">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <p class="dropzone-main-label">Drop files here. 100 MB maximum file size</p>
+            <div class="dropzone-formats">
+              <span class="format-pill">PNG</span>
+              <span class="format-pill">JPG</span>
+              <span class="format-pill">WEBP</span>
+              <span class="format-pill">BMP</span>
+              <span class="format-pill">TIFF</span>
+              <span class="format-pill">GIF</span>
+              <span class="format-pill">MP4</span>
+              <span class="format-pill">WEBM</span>
             </div>
           </div>
 
-          <div class="panel">
-            <div class="config-panel">
-              <h2 class="panel-title">Conversion Settings</h2>
+          <!-- Dual Attached Bottom Pill Buttons overlapping the card -->
+          <div class="dropzone-pill-actions">
+            <button type="button" class="btn-pill btn-pill-primary" id="selectFilesBtn">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+              <span>Choose File</span>
+            </button>
+            <button type="button" class="btn-pill btn-pill-secondary" id="googleDriveBtn">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 18H6a4 4 0 0 1-1-7.87 5 5 0 0 1 9.8-1.74 3.5 3.5 0 0 1 4.2 3.61A4 4 0 0 1 19 18z"></path>
+              </svg>
+              <span>From Google Drive</span>
+            </button>
+          </div>
+          <input type="file" class="file-input" id="fileInput" multiple accept="image/*,video/mp4,video/webm,.mp4,.webm">
 
-              <div class="format-grid">
-                <div class="form-group">
-                  <label for="mediaTypeSelect">Media Type</label>
-                  <select class="select-control" id="mediaTypeSelect">
-                    <option value="image">Image</option>
-                    <option value="video">Video</option>
-                  </select>
-                </div>
+          <!-- Uploaded files drawer inside card -->
+          <div class="selected-files-area" id="selectedFilesArea" style="display: none; margin-top: 24px;">
+            <div class="file-list-header">
+              <h4>Files Queue</h4>
+              <span id="fileCountBadge">0 files</span>
+            </div>
+            <div class="file-list" id="fileList"></div>
+          </div>
+        </div>
 
-                <div class="form-group">
-                  <label for="outputFormatSelect">Output Format</label>
-                  <select class="select-control" id="outputFormatSelect"></select>
-                </div>
+        <!-- Conversion Settings Card -->
+        <section class="panel">
+          <div class="config-panel">
+            <h2 class="panel-title">Conversion Settings</h2>
+
+            <div class="format-grid">
+              <div class="form-group">
+                <label for="mediaTypeSelect">Media Type</label>
+                <select class="select-control" id="mediaTypeSelect">
+                  <option value="image">Image</option>
+                  <option value="video">Video</option>
+                </select>
               </div>
 
               <div class="form-group">
-                <label for="outputNameInput">Custom Output Name</label>
-                <input type="text" class="input-control" id="outputNameInput" placeholder="Optional for single files or ZIP name">
+                <label for="outputFormatSelect">Output Format</label>
+                <select class="select-control" id="outputFormatSelect"></select>
               </div>
+            </div>
 
-              <div class="format-note" id="formatNote">Selected image files will convert to JPG. Selected video files will convert to MP4.</div>
+            <div class="form-group">
+              <label for="outputNameInput">Custom Output Name</label>
+              <input type="text" class="input-control" id="outputNameInput" placeholder="Optional for single files or ZIP name">
+            </div>
 
-              <div class="progress-wrap" id="progressWrap">
-                <div class="progress-label">
-                  <span id="progressActionLabel">Preparing upload...</span>
-                  <span id="progressPercentageLabel">0%</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" id="progressFill"></div>
-                </div>
+            <div class="format-note" id="formatNote">Selected image files will convert to JPG. Selected video files will convert to MP4.</div>
+
+            <div class="progress-wrap" id="progressWrap">
+              <div class="progress-label">
+                <span id="progressActionLabel">Preparing upload...</span>
+                <span id="progressPercentageLabel">0%</span>
               </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
 
-              <button class="btn-submit" id="convertBtn" type="button" disabled>
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <button class="btn-submit" id="convertBtn" type="button" disabled>
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+                <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+              </svg>
+              <span>Convert Files</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 6-Card Feature Grid matching converter.com screenshot -->
+        <section class="converter-features-section" aria-label="Why choose our converter">
+          <div class="converter-features-grid">
+            <!-- Card 1 -->
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-green">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="23 4 23 10 17 10"></polyline>
                   <polyline points="1 20 1 14 7 14"></polyline>
-                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
-                  <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                 </svg>
-                <span>Convert Files</span>
-              </button>
+              </div>
+              <h3>300+ formats supported</h3>
+              <p>We support more than 25600 different conversions between more than 300 different file formats. More than any other converter.</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-blue">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <h3>Fast and easy</h3>
+              <p>Just drop your files on the page, choose an output format and click "Convert" button. Wait a little for the process to complete. We aim to do all our conversions in under 1-2 minutes.</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-teal">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                  <polyline points="12 12 12 17"></polyline>
+                  <polyline points="9 14 12 11 15 14"></polyline>
+                </svg>
+              </div>
+              <h3>In the cloud</h3>
+              <p>All conversions take place in the cloud and client-side processing, consuming minimal capacity from your computer.</p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-indigo">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+              </div>
+              <h3>Custom settings</h3>
+              <p>Most conversion types support advanced options. For example with a video converter you can choose quality, aspect ratio, codec and other settings, rotate and flip.</p>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-green">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <h3>Security guaranteed</h3>
+              <p>We delete uploaded files instantly and converted ones after 24 hours. No one has access to your files and privacy is 100% guaranteed. Read more about security.</p>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="converter-feature-card">
+              <div class="feature-icon-badge badge-blue">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                  <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                </svg>
+              </div>
+              <h3>All devices supported</h3>
+              <p>GlobeOptimiser is browser-based and works for all platforms. There is no need to download and install any software.</p>
             </div>
           </div>
         </section>
 
-        <section class="benefits-card" aria-label="Benefits of using globeoptimiser">
-          <h3>Why use globeoptimiser?</h3>
-          <div class="benefits-grid">
-            <article class="benefit-card">
-              <div class="benefit-icon">⚡</div>
-              <strong>Online Image Converter</strong>
-              <p>Convert images instantly using the <strong>globeoptimiser.com</strong> <strong>PNG to WebP converter</strong>. Converting to next-generation image types dramatically increases page load speeds and search rankings.</p>
-            </article>
-            <article class="benefit-card">
-              <div class="benefit-icon">🧰</div>
-              <strong>Multi-Format Converter</strong>
-              <p>With <strong>globeoptimiser.com</strong>, you get a unified <strong>bulk image resizer</strong> and media converter. Swap formats between PNG, JPG, BMP, TIFF, GIF, and short MP4/WebM videos easily.</p>
-            </article>
-            <article class="benefit-card">
-              <div class="benefit-icon">📦</div>
-              <strong>Lossless Image Compression</strong>
-              <p>Looking to shrink files? <strong>globeoptimiser.com</strong> functions as a <strong>free online image compressor</strong> and converter, maintaining high-fidelity pixel clarity and alpha transparency.</p>
-            </article>
-            <article class="benefit-card">
-              <div class="benefit-icon">✨</div>
-              <strong>Batch Processing Engine</strong>
-              <p>Scale your digital campaigns fast. <strong>globeoptimiser.com</strong> automates <strong>batch resize</strong> and conversion workflows so you can drag, drop, and download web-ready assets instantly.</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="how-to-card" aria-label="How to convert files">
+        <section class="how-to-card" aria-label="How to convert files" style="margin-top: 32px;">
           <h3>How to Convert</h3>
           <ol>
             <li>Drop in one or more images or short videos.</li>
@@ -1223,6 +1912,17 @@
             <li>Click Convert Files to generate the converted output.</li>
           </ol>
         </section>
+
+        <!-- Mid-Page In-Content Ad -->
+        <div class="ad-slot ad-in-content" aria-label="Advertisement" style="margin: 24px auto;">
+          <span class="ad-label">Advertisement</span>
+          <!-- /23043164651/globeoptimiser_banner3 -->
+          <div id='div-gpt-ad-1790267487184-0' style='min-width: 200px; min-height: 50px;'>
+            <script>
+              googletag.cmd.push(function() { googletag.display('div-gpt-ad-1790267487184-0'); });
+            </script>
+          </div>
+        </div>
 
         <section class="panel results-panel" id="resultsPanel" style="display: none;">
           <div class="results-header">
@@ -1234,8 +1934,24 @@
 
       <aside class="ad-slot ad-sidebar" aria-label="Advertisement">
         <span class="ad-label">Advertisement</span>
-        <span class="ad-placeholder">Right sidebar ad</span>
+        <!-- /23043164651/globeoptimiser_sidebar2 -->
+        <div id='div-gpt-ad-1789999691219-0' style='min-width: 120px; min-height: 600px;'>
+          <script>
+            googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789999691219-0'); });
+          </script>
+        </div>
       </aside>
+    </div>
+
+    <!-- Bottom Leaderboard Ad -->
+    <div class="ad-slot ad-leaderboard" style="margin-bottom: 30px;" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_banner2 -->
+      <div id='div-gpt-ad-1790267192349-0' style='min-width: 200px; min-height: 50px;'>
+        <script>
+          googletag.cmd.push(function() { googletag.display('div-gpt-ad-1790267192349-0'); });
+        </script>
+      </div>
     </div>
   </main>
 
@@ -1267,9 +1983,6 @@
     const themeOptions = Array.from(document.querySelectorAll('.theme-option'));
     const themeIcon = document.getElementById('themeIcon');
 
-    const apiBaseMeta = document.querySelector('meta[name="globeoptimiser-api-base"]');
-    const configuredApiBase = apiBaseMeta ? apiBaseMeta.content.trim().replace(/\/$/, '') : '';
-    const resolvedApiBase = configuredApiBase || window.location.origin;
     const state = { files: [], result: null };
 
     const imageExts = new Set(['jpg', 'jpeg', 'png', 'webp', 'bmp', 'tiff', 'tif', 'gif']);
@@ -1302,7 +2015,7 @@
         : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
     };
 
-    const savedTheme = localStorage.getItem('globeoptimiser-theme') || 'system';
+    const savedTheme = localStorage.getItem('globeoptimiser-theme') || 'light';
     applyTheme(savedTheme);
 
     themeToggleBtn.addEventListener('click', (event) => {
@@ -1408,6 +2121,8 @@
 
       selectedFilesArea.style.display = state.files.length ? 'block' : 'none';
       fileCountBadge.textContent = `${state.files.length} file${state.files.length === 1 ? '' : 's'}`;
+      const headerFileCount = document.getElementById('headerFileCount');
+      if (headerFileCount) headerFileCount.textContent = state.files.length;
       validate();
     };
 
@@ -1425,8 +2140,12 @@
     };
 
     selectFilesBtn.addEventListener('click', () => fileInput.click());
+    const googleDriveBtn = document.getElementById('googleDriveBtn');
+    if (googleDriveBtn) {
+      googleDriveBtn.addEventListener('click', () => fileInput.click());
+    }
     fileDropzone.addEventListener('click', (event) => {
-      if (event.target !== selectFilesBtn) fileInput.click();
+      if (event.target !== selectFilesBtn && event.target !== googleDriveBtn) fileInput.click();
     });
     fileInput.addEventListener('change', (event) => addFiles(event.target.files));
 
@@ -1482,58 +2201,51 @@
       const outputName = outputNameInput.value.trim();
       if (outputName) formData.append('custom_name', outputName);
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `${resolvedApiBase}/convert`, true);
-      xhr.responseType = 'blob';
+      try {
+        const targetFmt = targetFormatForFiles().toLowerCase();
+        const mimeType = targetFmt === 'png' ? 'image/png' : targetFmt === 'webp' ? 'image/webp' : 'image/jpeg';
+        
+        for (let i = 0; i < state.files.length; i++) {
+          const file = state.files[i];
+          const pct = Math.round(((i + 1) / state.files.length) * 100);
+          setProgress(pct, `Converting file ${i + 1} of ${state.files.length}...`);
 
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          setProgress(Math.round((event.loaded / event.total) * 50), 'Uploading files...');
-        } else {
-          setProgress(25, 'Uploading files...');
-        }
-      };
+          const img = await new Promise((res, rej) => {
+            const tempImg = new Image();
+            const url = URL.createObjectURL(file);
+            tempImg.onload = () => { URL.revokeObjectURL(url); res(tempImg); };
+            tempImg.onerror = () => { URL.revokeObjectURL(url); rej(new Error(`Failed to load "${file.name}"`)); };
+            tempImg.src = url;
+          });
 
-      xhr.onprogress = (event) => {
-        if (event.lengthComputable) {
-          setProgress(50 + Math.round((event.loaded / event.total) * 48), 'Converting files...');
-        } else {
-          setProgress(75, 'Converting files...');
-        }
-      };
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
 
-      xhr.onload = async () => {
-        convertBtn.disabled = false;
-        validate();
+          // White background for JPG conversion from PNG with transparency
+          if (targetFmt === 'jpg' || targetFmt === 'jpeg') {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
 
-        if (xhr.status >= 200 && xhr.status < 300) {
-          setProgress(100, 'Conversion complete');
-          const blob = xhr.response;
-          const contentType = xhr.getResponseHeader('Content-Type') || '';
-          const disposition = xhr.getResponseHeader('Content-Disposition') || '';
-          const filenameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
-          const filename = filenameMatch && filenameMatch[1]
-            ? filenameMatch[1].replace(/['"]/g, '')
-            : contentType.includes('zip') ? 'globeoptimiser_converted_files.zip' : `converted.${targetFormatForFiles()}`;
-          renderResult({ blob, filename, contentType });
+          ctx.drawImage(img, 0, 0);
+
+          const blob = await new Promise((res) => canvas.toBlob(res, mimeType, 0.92));
+          const stem = file.name.replace(/\.[^/.]+$/, '');
+          const filename = outputName ? `${outputName}_${i + 1}.${targetFmt}` : `converted_${stem}.${targetFmt}`;
+          
+          renderResult({ blob, filename, contentType: mimeType });
           downloadBlob(blob, filename);
-          return;
         }
 
-        let errorText = `HTTP Error ${xhr.status}`;
-        try {
-          errorText = await xhr.response.text() || errorText;
-        } catch (error) {}
-        alert(`Error: ${errorText}`);
-      };
-
-      xhr.onerror = () => {
+        setProgress(100, 'Conversion complete');
+      } catch (err) {
+        alert(`Conversion error: ${err.message}`);
+      } finally {
         convertBtn.disabled = false;
         validate();
-        alert('Network request failed. Ensure the backend server is running and accessible.');
-      };
-
-      xhr.send(formData);
+      }
     });
 
     const renderResult = (item) => {

@@ -663,7 +663,12 @@ async def blog_post(request: Request, slug: str) -> Response:
         ad_code = (
             '\n<div class="ad-slot ad-in-content" style="margin: 28px auto;" aria-label="Advertisement">\n'
             '  <span class="ad-label">Advertisement</span>\n'
-            '  <div class="ad-placeholder">In-Article Responsive Ad (728x90 / 300x250)</div>\n'
+            '  <!-- /23043164651/globeoptimiser_banner4 -->\n'
+            '  <div id="div-gpt-ad-1790268002577-0" style="min-width: 200px; min-height: 50px;">\n'
+            '    <script>\n'
+            '      googletag.cmd.push(function() { googletag.display("div-gpt-ad-1790268002577-0"); });\n'
+            '    </script>\n'
+            '  </div>\n'
             '</div>\n'
         )
         paragraphs.insert(mid, ad_code)
