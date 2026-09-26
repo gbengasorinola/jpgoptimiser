@@ -291,7 +291,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      border-bottom: 1px solid var(--border);
+      border-bottom: none;
     }
 
     .top-ad-section .ad-slot.ad-leaderboard {
@@ -411,6 +411,18 @@
     @media (min-width: 1360px) {
       .ad-sidebar {
         display: flex;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-ad-section {
+        padding: 4px 8px;
+        border-bottom: none;
+      }
+      .top-ad-section .ad-slot.ad-leaderboard,
+      .ad-leaderboard {
+        min-height: 60px;
+        margin-bottom: 12px;
       }
     }
 

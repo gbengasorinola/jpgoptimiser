@@ -548,7 +548,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      border-bottom: 1px solid var(--border);
+      border-bottom: none;
     }
 
     .top-ad-section .ad-slot.ad-leaderboard {
@@ -666,6 +666,18 @@
       height: auto;
       min-height: 270px;
       margin: 20px auto;
+    }
+
+    @media (max-width: 768px) {
+      .top-ad-section {
+        padding: 4px 8px;
+        border-bottom: none;
+      }
+      .top-ad-section .ad-slot.ad-leaderboard,
+      .ad-leaderboard {
+        min-height: 60px;
+        margin-bottom: 12px;
+      }
     }
 
     .upload-container {
@@ -2018,37 +2030,7 @@
        CONVERTER.COM DESIGN SYSTEM OVERLAYS (SCREENSHOT ALIGNMENT)
        ======================================================= */
     
-    /* Background Organic Waves */
-    .hero-backdrop-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 480px;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .hero-waves-svg {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .floating-shape-icon {
-      position: absolute;
-      color: #64748b;
-      opacity: 0.18;
-      pointer-events: none;
-      animation: floatSubtle 7s ease-in-out infinite alternate;
-    }
-    [data-theme="dark"] .floating-shape-icon {
-      opacity: 0.12;
-      color: #94a3b8;
-    }
-    @keyframes floatSubtle {
-      0% { transform: translateY(0px) rotate(0deg); }
-      100% { transform: translateY(-10px) rotate(3deg); }
-    }
+
 
     /* Hero Headline & Subtitle */
     .hero-converter-header {

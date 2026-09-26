@@ -62,250 +62,7 @@
     };
 
     googletag.cmd.push(function() {
-      /* =========================
-          SIZE MAPPINGS (FLUID ENABLED)
-         ========================== */
-      var mappingBanner = googletag.sizeMapping()
-        .addSize([980, 0], [[970, 90], [728, 90], [960, 90], [970, 66], [320, 50], [300, 250], "fluid"])
-        .addSize([768, 0], [[728, 90], [300, 250], [320, 50], "fluid"])
-        .addSize([0, 0], [[300, 250], [320, 50], "fluid"])
-        .build();
-
-      var mappingSidebar = googletag.sizeMapping()
-        .addSize([1360, 0], [[160, 600], [120, 600], "fluid"])
-        .addSize([0, 0], [])
-        .build();
-
-      var mappingTop = mappingBanner;
-      var mappingBody = mappingBanner;
-
-      /* =========================
-          SPECIAL FORMATS (Anchor & Interstitial)
-         ========================== */
-      // 1. Bottom Anchor / Sticky Ad
-      var anchorSlot = googletag.defineOutOfPageSlot(
-        "/23043164651/globeoptimiser/globeoptimiser_anchor",
-        googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
-      );
-      if (anchorSlot) {
-        anchorSlot.addService(googletag.pubads());
-      }
-
-      // 2. Web Interstitial Ad
-      var interstitialSlot = googletag.defineOutOfPageSlot(
-        "/23043164651/globeoptimiser/globeoptimiser_intersitital",
-        googletag.enums.OutOfPageFormat.INTERSTITIAL
-      );
-      if (interstitialSlot) {
-        interstitialSlot.addService(googletag.pubads());
-      }
-
-      /* =========================
-          STANDARD BANNER SLOT REGISTRY
-         ========================== */
-      var bannerSizes = [[970, 90], [728, 90], [960, 90], [970, 66], [320, 50], [300, 250], "fluid"];
-
-      var slotsToRegister = [
-        {
-          path: "/23043164651/globeoptimiser_sidebar2",
-          sizes: [[160, 600], [120, 600], "fluid"],
-          div: "div-gpt-ad-1789999691219-0",
-          type: "sidebar"
-        },
-        {
-          path: "/23043164651/globeoptimiser_sidebar1",
-          sizes: [[160, 600], [120, 600], "fluid"],
-          div: "div-gpt-ad-1789999580078-0",
-          type: "sidebar"
-        },
-        {
-          path: "/23043164651/globeoptimiser_banner1",
-          sizes: bannerSizes,
-          div: "div-gpt-ad-1789998229083-0",
-          type: "banner"
-        },
-        {
-          path: "/23043164651/globeoptimiser_banner2",
-          sizes: bannerSizes,
-          div: "div-gpt-ad-1790267192349-0",
-          type: "banner"
-        },
-        {
-          path: "/23043164651/globeoptimiser_banner3",
-          sizes: bannerSizes,
-          div: "div-gpt-ad-1790267487184-0",
-          type: "banner"
-        },
-        {
-          path: "/23043164651/globeoptimiser_banner4",
-          sizes: bannerSizes,
-          div: "div-gpt-ad-1790268002577-0",
-          type: "banner"
-        }
-      ];
-
-      slotsToRegister.forEach(function(config) {
-        var mapping = config.type === "sidebar" ? mappingSidebar : mappingBanner;
-        var definedSlot = googletag.defineSlot(config.path, config.sizes, config.div)
-          .defineSizeMapping(mapping)
-          .addService(googletag.pubads());
-
-        window.gptTrackingEngine.refreshableSlots.push(definedSlot);
-      });
-
-      /* =========================
-          EVENT LISTENERS
-         ========================== */
-      googletag.pubads().addEventListener("slotRenderEnded", function(event) {
-        window.gptTrackingEngine.isProcessingRefresh = false;
-        console.log("[GPT Debug Hook] Render Ended:", event.slot.getSlotElementId(), "| Empty:", event.isEmpty, "| Dispatched Size:", event.size);
-      });
-
-      googletag.pubads().addEventListener("impressionViewable", function(event) {
-        console.log("[GPT Debug Hook] Active View Confirmed - Ad visible to user:", event.slot.getSlotElementId());
-      });
-
-      var visibilityTimers = {};
-      googletag.pubads().addEventListener("slotVisibilityChanged", function(event) {
-        var slotId = event.slot.getSlotElementId();
-        if (visibilityTimers[slotId]) clearTimeout(visibilityTimers[slotId]);
-
-        visibilityTimers[slotId] = setTimeout(function() {
-          console.log("[GPT Debug Hook] Real-Time Visibility Change:", slotId, "->", event.inViewPercentage + "%");
-        }, 150);
-      });
-
-      /* =========================
-          GPT SYSTEM CONFIGURATIONS
-         ========================== */
-      googletag.pubads().enableSingleRequest();
-
-      googletag.pubads().enableLazyLoad({
-        fetchMarginPercent: 200,
-        renderMarginPercent: 50,
-        mobileScaling: 2.0
-      });
-
-      googletag.pubads().setTargeting("sections", ["all"]);
-      googletag.pubads().collapseEmptyDivs(true);
-      googletag.pubads().enableVideoAds();
-      googletag.enableServices();
-    });
-
-    /* =========================
-        INTERSECTION OBSERVER & REFRESH LOGIC
-       ========================== */
-    document.addEventListener("DOMContentLoaded", function() {
-      if ("IntersectionObserver" in window) {
-        window.gptTrackingEngine.viewabilityObserver = new IntersectionObserver(function(entries) {
-          entries.forEach(function(entry) {
-            var id = entry.target.id;
-            if (entry.intersectionRatio >= 0.5) {
-              if (!window.gptTrackingEngine.viewableSlotTracker[id]) {
-                window.gptTrackingEngine.viewableSlotTracker[id] = Date.now();
-              }
-            } else {
-              window.gptTrackingEngine.viewableSlotTracker[id] = null;
-            }
-          });
-        }, { threshold: [0.0, 0.5, 1.0] });
-
-        var slotDivIds = [
-          "div-gpt-ad-1789999691219-0",
-          "div-gpt-ad-1789999580078-0",
-          "div-gpt-ad-1789998229083-0",
-          "div-gpt-ad-1790267192349-0",
-          "div-gpt-ad-1790267487184-0",
-          "div-gpt-ad-1790268002577-0"
-        ];
-
-        slotDivIds.forEach(function(divId) {
-          var el = document.getElementById(divId);
-          if (el) window.gptTrackingEngine.viewabilityObserver.observe(el);
-        });
-      }
-
-      // Auto-Refresh Engine
-      setInterval(function() {
-        if (document.hidden || window.gptTrackingEngine.isProcessingRefresh) return;
-
-        if (window.googletag && googletag.apiReady) {
-          var slotsEligibleForRefresh = window.gptTrackingEngine.refreshableSlots.filter(function(slot) {
-            var divId = slot.getSlotElementId();
-            var visibleSince = window.gptTrackingEngine.viewableSlotTracker[divId];
-            return visibleSince && (Date.now() - visibleSince >= 1000);
-          });
-
-          if (slotsEligibleForRefresh.length > 0) {
-            console.log("[GPT Engine] Viewable Refresh Throttling Gate Passed. Refreshing slots:", slotsEligibleForRefresh.length);
-            window.gptTrackingEngine.isProcessingRefresh = true;
-            googletag.pubads().refresh(slotsEligibleForRefresh);
-          }
-        }
-      }, window.gptTrackingEngine.refreshIntervalMs);
-    });
-  </script>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact Us — globeoptimiser.com</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-soft: #f1f5f9;
-      --surface-hover: #e2e8f0;
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --text-heading: #1e293b;
-      --border: rgba(15, 23, 42, 0.08);
-      --border-hover: rgba(15, 23, 42, 0.15);
-      --border-focus: rgba(37, 99, 235, 0.5);
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --primary-soft: rgba(37, 99, 235, 0.08);
-      --primary-gradient: linear-gradient(135deg, #06b6d4, #2563eb);
-      --radius: 12px;
-      --radius-sm: 8px;
-      --radius-pill: 9999px;
-      --max-width: 600px;
-    }
-
-    [data-theme="dark"] {
-      --bg: #0b0f19;
-      --surface: rgba(15, 19, 28, 0.7);
-      --surface-soft: rgba(22, 28, 38, 0.9);
-      --surface-hover: rgba(30, 39, 53, 0.6);
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-heading: #f8fafc;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.16);
-      --border-focus: rgba(37, 99, 235, 0.4);
-      --primary: #3b82f6;
-      --primary-hover: #60a5fa;
-      --primary-soft: rgba(59, 130, 246, 0.15);
-    }
-
-    /* Ambient Organic Waves Backdrop */
-    .hero-backdrop-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 380px;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .hero-waves-svg {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .logo-ring-icon {
+.logo-ring-icon {
       width: 34px;
       height: 34px;
       display: grid;
@@ -910,7 +667,6 @@
       width: 100%;
       margin: 0 auto;
     }
-
     /* Dedicated Top Ad Section immediately following navigation */
     .top-ad-section {
       position: relative;
@@ -922,17 +678,18 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      border-bottom: 1px solid var(--border);
+      border-bottom: none;
     }
 
     .top-ad-section .ad-slot.ad-leaderboard {
       margin: 0 auto;
     }
 
+    /* Sponsor slots */
     .ad-slot {
-      background: var(--surface-soft, rgba(22, 28, 38, 0.9));
-      border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius, 12px);
+      background: transparent;
+      border: none;
+      border-radius: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -942,45 +699,61 @@
       margin: 0 auto;
       box-sizing: border-box;
       padding: 6px 4px;
-      transition: all 0.2s ease;
-      color: var(--text-muted, #94a3b8);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: var(--transition-normal);
+      color: var(--text-muted);
     }
-
+    
     .ad-slot:hover {
-      border-color: var(--border-hover, rgba(255, 255, 255, 0.15));
+      border-color: transparent;
     }
 
     .ad-label {
       display: block;
-      position: static;
       font-size: 0.62rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--text-muted, #94a3b8);
-      opacity: 0.5;
+      color: var(--text-muted);
+      opacity: 0.45;
       margin-bottom: 4px;
       line-height: 1;
       text-align: center;
       width: 100%;
     }
 
+    .ad-placeholder {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+      opacity: 0.7;
+      padding: 10px;
+    }
+
     .ad-leaderboard {
       width: 100%;
       max-width: 970px;
-      min-height: 50px;
+      /* Min-height pre-reserves space for the tallest allowed ad (300x250 MPU + padding) */
+      min-height: 270px;
       height: auto;
-      margin: 0 auto 24px;
+      margin-bottom: 16px;
     }
 
+    /* GPT-injected container div: constrain width to the slot, never wider */
     .ad-slot div[id^="div-gpt-ad"] {
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
+      max-width: 100% !important;
       width: 100% !important;
       min-height: 50px;
       overflow: visible !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Google __container__ and iframe wrapper divs with hardcoded width inline styles */
+    .ad-slot div[id*="__container__"] {
+      max-width: 100% !important;
     }
 
     .ad-slot div[id^="div-gpt-ad"] iframe {
@@ -992,23 +765,48 @@
     .ad-sidebar {
       width: 160px;
       min-height: 600px;
+      max-width: 160px;
+      overflow: visible;
       position: absolute;
       top: 0;
       z-index: 10;
       display: none;
     }
 
-    .ad-sidebar:first-of-type {
-      right: calc(100% + 20px);
+    .ad-sidebar:first-of-type,
+    .ad-sidebar.ad-sidebar-left {
+      right: calc(100% + 24px);
     }
 
-    .ad-sidebar:last-of-type {
-      left: calc(100% + 20px);
+    .ad-sidebar:last-of-type,
+    .ad-sidebar.ad-sidebar-right {
+      left: calc(100% + 24px);
     }
 
     @media (min-width: 1360px) {
       .ad-sidebar {
         display: flex;
+      }
+    }
+
+    .ad-in-content {
+      width: 100%;
+      max-width: 100%;
+      /* height: auto allows the slot to grow to fit any ad size served (50px banner to 300x250 MPU) */
+      height: auto;
+      min-height: 270px;
+      margin: 20px auto;
+    }
+
+    @media (max-width: 768px) {
+      .top-ad-section {
+        padding: 4px 8px;
+        border-bottom: none;
+      }
+      .top-ad-section .ad-slot.ad-leaderboard,
+      .ad-leaderboard {
+        min-height: 60px;
+        margin-bottom: 12px;
       }
     }
 </style>
@@ -1101,26 +899,6 @@
         </script>
       </div>
     </div>
-  </div>
-
-  <!-- Ambient Organic Waves Backdrop -->
-  <div class="hero-backdrop-container" aria-hidden="true">
-    <svg class="hero-waves-svg" viewBox="0 0 1440 380" fill="none" preserveAspectRatio="none">
-      <path d="M0,140 C320,240 480,60 800,150 C1120,240 1280,80 1440,140 L1440,0 L0,0 Z" fill="url(#heroWaveGrad1)" opacity="0.6"/>
-      <path d="M0,200 C360,90 640,260 960,140 C1200,60 1360,200 1440,140 L1440,0 L0,0 Z" fill="url(#heroWaveGrad2)" opacity="0.45"/>
-      <defs>
-        <linearGradient id="heroWaveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#e0e7ff" stop-opacity="0.8"/>
-          <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#f0fdf4" stop-opacity="0.3"/>
-        </linearGradient>
-        <linearGradient id="heroWaveGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#ede9fe" stop-opacity="0.7"/>
-          <stop offset="60%" stop-color="#e0f2fe" stop-opacity="0.5"/>
-          <stop offset="100%" stop-color="#dbeafe" stop-opacity="0.25"/>
-        </linearGradient>
-      </defs>
-    </svg>
   </div>
 
   <main class="main-container">
