@@ -65,16 +65,19 @@
       /* =========================
           SIZE MAPPINGS (FLUID ENABLED)
          ========================== */
-      var mappingTop = googletag.sizeMapping()
-        .addSize([1024, 0], [[970, 90], [728, 90], [970, 66], [320, 100], [300, 250], [366, 280], [336, 280], [320, 480], [320, 50], [300, 100], [300, 50], [160, 600], [120, 600], "fluid"])
-        .addSize([768, 0], [[728, 90], [300, 250], [300, 100], "fluid"])
-        .addSize([0, 0], [[300, 250], [250, 250], [336, 280], [320, 480], [366, 280],  [200, 200], [320, 50], "fluid"])
+      var mappingBanner = googletag.sizeMapping()
+        .addSize([980, 0], [[970, 90], [728, 90], [960, 90], [970, 66], [320, 50], [300, 250], "fluid"])
+        .addSize([768, 0], [[728, 90], [300, 250], [320, 50], "fluid"])
+        .addSize([0, 0], [[300, 250], [320, 50], "fluid"])
         .build();
 
-      var mappingBody = googletag.sizeMapping()
-        .addSize([768, 0], [[728, 90], [300, 250], "fluid"])
-        .addSize([0, 0], [[300, 250], [250, 250], [320, 50], "fluid"])
+      var mappingSidebar = googletag.sizeMapping()
+        .addSize([1360, 0], [[160, 600], [120, 600], "fluid"])
+        .addSize([0, 0], [])
         .build();
+
+      var mappingTop = mappingBanner;
+      var mappingBody = mappingBanner;
 
       /* =========================
           SPECIAL FORMATS (Anchor & Interstitial)
@@ -100,48 +103,51 @@
       /* =========================
           STANDARD BANNER SLOT REGISTRY
          ========================== */
+      var bannerSizes = [[970, 90], [728, 90], [960, 90], [970, 66], [320, 50], [300, 250], "fluid"];
+
       var slotsToRegister = [
         {
           path: "/23043164651/globeoptimiser_sidebar2",
           sizes: [[160, 600], [120, 600], "fluid"],
           div: "div-gpt-ad-1789999691219-0",
-          type: "top"
+          type: "sidebar"
         },
         {
           path: "/23043164651/globeoptimiser_sidebar1",
           sizes: [[160, 600], [120, 600], "fluid"],
           div: "div-gpt-ad-1789999580078-0",
-          type: "top"
+          type: "sidebar"
         },
         {
           path: "/23043164651/globeoptimiser_banner1",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1789998229083-0",
-          type: "top"
+          type: "banner"
         },
         {
           path: "/23043164651/globeoptimiser_banner2",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1790267192349-0",
-          type: "top"
+          type: "banner"
         },
         {
           path: "/23043164651/globeoptimiser_banner3",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1790267487184-0",
-          type: "top"
+          type: "banner"
         },
         {
           path: "/23043164651/globeoptimiser_banner4",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1790268002577-0",
-          type: "top"
+          type: "banner"
         }
       ];
 
       slotsToRegister.forEach(function(config) {
+        var mapping = config.type === "sidebar" ? mappingSidebar : mappingBanner;
         var definedSlot = googletag.defineSlot(config.path, config.sizes, config.div)
-          .defineSizeMapping(config.type === "top" ? mappingTop : mappingBody)
+          .defineSizeMapping(mapping)
           .addService(googletag.pubads());
 
         window.gptTrackingEngine.refreshableSlots.push(definedSlot);
@@ -274,6 +280,24 @@
   <!-- Inline Premium CSS (No external roundtrips for maximum Lighthouse scores) -->
   {% include "styles.html" %}
   <style>
+    /* Dedicated Top Ad Section immediately following navigation */
+    .top-ad-section {
+      position: relative;
+      z-index: 20;
+      width: 100%;
+      background: var(--bg);
+      padding: 12px 16px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .top-ad-section .ad-slot.ad-leaderboard {
+      margin: 0 auto;
+    }
+
     /* Premium Revenue-Driven Ad slots styling overrides */
     .ad-slot {
       background: var(--surface-soft);
@@ -284,8 +308,10 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       margin: 0 auto;
+      box-sizing: border-box;
+      padding: 6px 4px;
       transition: var(--transition-normal);
       color: var(--text-muted);
       box-shadow: var(--shadow-sm);
@@ -298,18 +324,22 @@
       inset: 0;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
       animation: shimmer 1.5s infinite;
+      pointer-events: none;
     }
 
     .ad-label {
-      position: absolute;
-      top: 6px;
-      font-size: 0.6rem;
+      display: block;
+      position: static;
+      font-size: 0.62rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-muted);
       opacity: 0.5;
-      z-index: 1;
+      margin-bottom: 4px;
+      line-height: 1;
+      text-align: center;
+      width: 100%;
     }
 
     .ad-placeholder {
@@ -324,9 +354,25 @@
 
     .ad-leaderboard {
       width: 100%;
-      max-width: 960px;
-      height: 90px;
-      margin: 0 auto;
+      max-width: 970px;
+      min-height: 50px;
+      height: auto;
+      margin: 0 auto 24px;
+    }
+
+    .ad-slot div[id^="div-gpt-ad"] {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      width: 100% !important;
+      min-height: 50px;
+      overflow: visible !important;
+    }
+
+    .ad-slot div[id^="div-gpt-ad"] iframe {
+      display: block !important;
+      margin: 0 auto !important;
+      max-width: 100% !important;
     }
 
     .ad-sidebar {
@@ -338,17 +384,19 @@
       display: none;
     }
 
-    .ad-sidebar-left {
+    .ad-sidebar:first-of-type,
+    .ad-sidebar.ad-sidebar-left {
       right: calc(100% + 24px);
     }
 
-    .ad-sidebar-right {
+    .ad-sidebar:last-of-type,
+    .ad-sidebar.ad-sidebar-right {
       left: calc(100% + 24px);
     }
 
     .ad-in-content {
       width: 100%;
-      max-width: 960px;
+      max-width: 100%;
       height: 120px;
       margin: 20px auto;
     }
@@ -395,13 +443,6 @@
         </div>
         <div class="logo-text">GLOBE<span>OPTIMISER</span></div>
       </a>
-      <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12" class="line-middle"></line>
-          <line x1="3" y1="6" x2="21" y2="6" class="line-top"></line>
-          <line x1="3" y1="18" x2="21" y2="18" class="line-bottom"></line>
-        </svg>
-      </button>
       <nav class="header-nav" id="headerNav">
         <!-- Video Tools Dropdown -->
         <div class="nav-item dropdown">
@@ -530,6 +571,29 @@
         </div>
 
         <a href="/blog" class="nav-link {% if 'blog' in seo_data.canonical %}active{% endif %}">Blog</a>
+
+        <!-- Mobile Theme Switcher Row (inside hamburger menu) -->
+        <div class="mobile-theme-row">
+          <div class="mobile-theme-header">
+            <svg class="theme-icon-indicator" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span class="mobile-theme-title">Theme</span>
+          </div>
+          <div class="mobile-theme-options">
+            <button class="theme-option" data-theme="system" type="button">System</button>
+            <button class="theme-option" data-theme="dark" type="button">Dark</button>
+            <button class="theme-option" data-theme="light" type="button">Light</button>
+          </div>
+        </div>
       </nav>
       <div class="header-actions">
         <div class="theme-toggle-wrapper">
@@ -552,18 +616,27 @@
             <button class="theme-option" data-theme="light" type="button">Light</button>
           </div>
         </div>
+        <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12" class="line-middle"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line-top"></line>
+            <line x1="3" y1="18" x2="21" y2="18" class="line-bottom"></line>
+          </svg>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- Above-The-Fold Leaderboard Ad (High RPM Placement) -->
-  <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
-    <span class="ad-label">Advertisement</span>
-    <!-- /23043164651/globeoptimiser_banner1 -->
-    <div id='div-gpt-ad-1789998229083-0' style='min-width: 200px; min-height: 50px;'>
-      <script>
-        googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789998229083-0'); });
-      </script>
+  <!-- Dedicated Top Ad Slot Section (Directly after Navigation) -->
+  <div class="top-ad-section" id="topAdSection">
+    <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_banner1 -->
+      <div id='div-gpt-ad-1789998229083-0' style='min-width: 200px; min-height: 50px;'>
+        <script>
+          googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789998229083-0'); });
+        </script>
+      </div>
     </div>
   </div>
 
@@ -640,11 +713,12 @@
     const getSystemTheme = () => (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
     const updateThemeIcon = (theme) => {
-      if (theme === 'dark') {
-        themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
-      } else {
-        themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
-      }
+      const sunSvg = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+      const moonSvg = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+      const iconHtml = theme === 'dark' ? sunSvg : moonSvg;
+      document.querySelectorAll('#themeIcon, .theme-icon-indicator').forEach(el => {
+        el.innerHTML = iconHtml;
+      });
     };
 
     const applyTheme = (theme) => {

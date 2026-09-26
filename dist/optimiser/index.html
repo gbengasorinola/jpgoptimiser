@@ -65,16 +65,19 @@
       /* =========================
           SIZE MAPPINGS (FLUID ENABLED)
          ========================== */
-      var mappingTop = googletag.sizeMapping()
-        .addSize([1024, 0], [[970, 90], [728, 90], [970, 66], [320, 100], [300, 250], [366, 280], [336, 280], [320, 480], [320, 50], [300, 100], [300, 50], [160, 600], [120, 600], "fluid"])
-        .addSize([768, 0], [[728, 90], [300, 250], [300, 100], "fluid"])
-        .addSize([0, 0], [[300, 250], [250, 250], [336, 280], [320, 480], [366, 280],  [200, 200], [320, 50], "fluid"])
+      var mappingBanner = googletag.sizeMapping()
+        .addSize([980, 0], [[970, 90], [728, 90], [960, 90], [970, 66], [320, 50], [300, 250], "fluid"])
+        .addSize([768, 0], [[728, 90], [300, 250], [320, 50], "fluid"])
+        .addSize([0, 0], [[300, 250], [320, 50], "fluid"])
         .build();
 
-      var mappingBody = googletag.sizeMapping()
-        .addSize([768, 0], [[728, 90], [300, 250], "fluid"])
-        .addSize([0, 0], [[300, 250], [250, 250], [320, 50], "fluid"])
+      var mappingSidebar = googletag.sizeMapping()
+        .addSize([1360, 0], [[160, 600], [120, 600], "fluid"])
+        .addSize([0, 0], [])
         .build();
+
+      var mappingTop = mappingBanner;
+      var mappingBody = mappingBanner;
 
       /* =========================
           SPECIAL FORMATS (Anchor & Interstitial)
@@ -100,48 +103,51 @@
       /* =========================
           STANDARD BANNER SLOT REGISTRY
          ========================== */
+      var bannerSizes = [[970, 90], [728, 90], [960, 90], [970, 66], [320, 50], [300, 250], "fluid"];
+
       var slotsToRegister = [
         {
           path: "/23043164651/globeoptimiser_sidebar2",
           sizes: [[160, 600], [120, 600], "fluid"],
           div: "div-gpt-ad-1789999691219-0",
-          type: "top"
+          type: "sidebar"
         },
         {
           path: "/23043164651/globeoptimiser_sidebar1",
           sizes: [[160, 600], [120, 600], "fluid"],
           div: "div-gpt-ad-1789999580078-0",
-          type: "top"
+          type: "sidebar"
         },
         {
           path: "/23043164651/globeoptimiser_banner1",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1789998229083-0",
-          type: "top"
+          type: "banner"
         },
         {
           path: "/23043164651/globeoptimiser_banner2",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1790267192349-0",
-          type: "top"
+          type: "banner"
         },
         {
           path: "/23043164651/globeoptimiser_banner3",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1790267487184-0",
-          type: "top"
+          type: "banner"
         },
         {
           path: "/23043164651/globeoptimiser_banner4",
-          sizes: [[970, 90], [728, 90], [970, 66], [320, 100], [320, 50], [300, 250], [300, 100], [300, 50], [250, 250], [200, 200], "fluid"],
+          sizes: bannerSizes,
           div: "div-gpt-ad-1790268002577-0",
-          type: "top"
+          type: "banner"
         }
       ];
 
       slotsToRegister.forEach(function(config) {
+        var mapping = config.type === "sidebar" ? mappingSidebar : mappingBanner;
         var definedSlot = googletag.defineSlot(config.path, config.sizes, config.div)
-          .defineSizeMapping(config.type === "top" ? mappingTop : mappingBody)
+          .defineSizeMapping(mapping)
           .addService(googletag.pubads());
 
         window.gptTrackingEngine.refreshableSlots.push(definedSlot);
@@ -648,6 +654,24 @@
       border-color: var(--border-hover);
     }
 
+    /* Dedicated Top Ad Section immediately following navigation */
+    .top-ad-section {
+      position: relative;
+      z-index: 20;
+      width: 100%;
+      background: var(--bg);
+      padding: 12px 16px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .top-ad-section .ad-slot.ad-leaderboard {
+      margin: 0 auto;
+    }
+
     /* Sponsor slots */
     .ad-slot {
       background: var(--surface);
@@ -658,8 +682,10 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       margin: 0 auto;
+      box-sizing: border-box;
+      padding: 6px 4px;
       transition: var(--transition-normal);
       color: var(--text-muted);
     }
@@ -669,14 +695,17 @@
     }
 
     .ad-label {
-      position: absolute;
-      top: 8px;
+      display: block;
       font-size: 0.62rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-muted);
-      opacity: 0.4;
+      opacity: 0.45;
+      margin-bottom: 4px;
+      line-height: 1;
+      text-align: center;
+      width: 100%;
     }
 
     .ad-placeholder {
@@ -690,8 +719,25 @@
 
     .ad-leaderboard {
       width: 100%;
-      min-height: 90px;
+      max-width: 970px;
+      min-height: 50px;
+      height: auto;
       margin-bottom: 16px;
+    }
+
+    .ad-slot div[id^="div-gpt-ad"] {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      width: 100% !important;
+      min-height: 50px;
+      overflow: visible !important;
+    }
+
+    .ad-slot div[id^="div-gpt-ad"] iframe {
+      display: block !important;
+      margin: 0 auto !important;
+      max-width: 100% !important;
     }
 
     .ad-sidebar {
@@ -703,15 +749,17 @@
       display: none;
     }
 
-    .ad-sidebar:first-of-type {
-      right: calc(100% + 16px);
+    .ad-sidebar:first-of-type,
+    .ad-sidebar.ad-sidebar-left {
+      right: calc(100% + 24px);
     }
 
-    .ad-sidebar:last-of-type {
-      left: calc(100% + 16px);
+    .ad-sidebar:last-of-type,
+    .ad-sidebar.ad-sidebar-right {
+      left: calc(100% + 24px);
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1360px) {
       .ad-sidebar {
         display: flex;
       }
@@ -1671,41 +1719,144 @@
       to { opacity: 1; }
     }
 
-    @media (max-width: 600px) {
+    /* Mobile / Tablet Header Navigation & Hamburger Layout */
+    @media (max-width: 860px) {
       .header-container {
-        padding: 12px 16px;
+        padding: 10px 16px;
         position: relative;
+        justify-content: space-between;
       }
       .logo-text {
         font-size: 1.15rem;
       }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+      }
+      /* Hide theme toggle button from header bar on mobile */
+      .header-actions .theme-toggle-wrapper {
+        display: none !important;
+      }
+      /* Show hamburger menu toggle button in header-actions on the far right */
+      .menu-toggle {
+        display: grid !important;
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+      }
+      /* Hamburger menu dropdown container */
       .header-nav {
         display: none;
         position: absolute;
         top: 100%;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
         background: var(--surface-soft);
         border-bottom: 1px solid var(--border);
         flex-direction: column;
-        padding: 12px 24px;
-        gap: 8px;
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+        padding: 12px 16px 16px;
+        gap: 6px;
+        box-shadow: 0 16px 30px -4px rgba(0, 0, 0, 0.4);
         z-index: 105;
         transform: none;
+        max-height: calc(100vh - 65px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .header-nav.open {
         display: flex;
       }
-      .menu-toggle {
-        display: grid;
-      }
       .nav-link {
         width: 100%;
-        padding: 10px 12px;
+        box-sizing: border-box;
+        padding: 10px 14px;
         text-align: left;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        border-radius: var(--radius-sm);
       }
+      /* Theme Section inside Mobile Hamburger Menu */
+      .mobile-theme-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+        margin-top: 8px;
+      }
+      .mobile-theme-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.82rem;
+        padding-left: 4px;
+      }
+      .mobile-theme-header svg {
+        color: var(--primary);
+      }
+      .mobile-theme-title {
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+      }
+      .mobile-theme-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        background: var(--surface);
+        padding: 4px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        box-sizing: border-box;
+        width: 100%;
+      }
+      .mobile-theme-options .theme-option {
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 8px 6px;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 600;
+        border-radius: var(--radius-xs, 6px);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .mobile-theme-options .theme-option:hover {
+        color: var(--text);
+        background: var(--surface-hover);
+      }
+      .mobile-theme-options .theme-option.active {
+        color: #ffffff;
+        background: var(--primary);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      }
+    }
+
+    @media (min-width: 861px) {
+      .mobile-theme-row {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 600px) {
       .main-container {
         padding: 24px 16px 64px;
         gap: 24px;
@@ -1724,7 +1875,8 @@
         gap: 12px;
       }
       .ad-leaderboard {
-        height: 60px;
+        height: auto;
+        min-height: 50px;
       }
     }
 
@@ -2115,13 +2267,6 @@
         </div>
         <div class="logo-text">GLOBE<span>OPTIMISER</span></div>
       </a>
-      <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12" class="line-middle"></line>
-          <line x1="3" y1="6" x2="21" y2="6" class="line-top"></line>
-          <line x1="3" y1="18" x2="21" y2="18" class="line-bottom"></line>
-        </svg>
-      </button>
       <nav class="header-nav" id="headerNav">
         <a href="/" class="nav-link active">Convert images</a>
         <a href="/converter" class="nav-link">File Converter</a>
@@ -2129,6 +2274,29 @@
         <a href="/convert-video" class="nav-link">Convert video</a>
         <a href="/resize-video" class="nav-link">Resize video</a>
         <a href="/about" class="nav-link">Help</a>
+
+        <!-- Mobile Theme Switcher Row (inside hamburger menu) -->
+        <div class="mobile-theme-row">
+          <div class="mobile-theme-header">
+            <svg class="theme-icon-indicator" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span class="mobile-theme-title">Theme</span>
+          </div>
+          <div class="mobile-theme-options">
+            <button class="theme-option" data-theme="system" type="button">System</button>
+            <button class="theme-option" data-theme="dark" type="button">Dark</button>
+            <button class="theme-option" data-theme="light" type="button">Light</button>
+          </div>
+        </div>
       </nav>
       <div class="header-actions">
         <a href="#selectedFilesArea" class="pill-badge" id="myFilesPill">
@@ -2155,9 +2323,29 @@
             <button class="theme-option" data-theme="light" type="button">Light</button>
           </div>
         </div>
+        <button class="menu-toggle" id="menuToggleBtn" aria-label="Toggle Menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12" class="line-middle"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line-top"></line>
+            <line x1="3" y1="18" x2="21" y2="18" class="line-bottom"></line>
+          </svg>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Dedicated Top Ad Slot Section (Directly after Navigation) -->
+  <div class="top-ad-section" id="topAdSection">
+    <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
+      <span class="ad-label">Advertisement</span>
+      <!-- /23043164651/globeoptimiser_banner1 -->
+      <div id='div-gpt-ad-1789998229083-0' style='min-width: 200px; min-height: 50px;'>
+        <script>
+          googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789998229083-0'); });
+        </script>
+      </div>
+    </div>
+  </div>
 
   <!-- Ambient Organic Waves Backdrop with Floating Media Icons -->
   <div class="hero-backdrop-container" aria-hidden="true">
@@ -2205,15 +2393,7 @@
       <p class="converter-subtitle">Compress, convert and resize your files to any format</p>
     </section>
 
-    <div class="ad-slot ad-leaderboard" aria-label="Advertisement">
-      <span class="ad-label">Advertisement</span>
-      <!-- /23043164651/globeoptimiser_banner1 -->
-      <div id='div-gpt-ad-1789998229083-0' style='min-width: 200px; min-height: 50px;'>
-        <script>
-          googletag.cmd.push(function() { googletag.display('div-gpt-ad-1789998229083-0'); });
-        </script>
-      </div>
-    </div>
+
 
     <div class="app-layout-wrapper">
       <aside class="ad-slot ad-sidebar" aria-label="Advertisement">
@@ -2729,23 +2909,24 @@
     });
 
     const updateThemeIcon = (theme) => {
-      if (theme === 'dark') {
-        themeIcon.innerHTML = `
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        `;
-      } else {
-        themeIcon.innerHTML = `
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        `;
-      }
+      const sunSvg = `
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      `;
+      const moonSvg = `
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      `;
+      const iconHtml = theme === 'dark' ? sunSvg : moonSvg;
+      document.querySelectorAll('#themeIcon, .theme-icon-indicator').forEach(el => {
+        el.innerHTML = iconHtml;
+      });
     };
 
     // Initialize theme from storage
