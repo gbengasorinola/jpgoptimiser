@@ -300,9 +300,9 @@
 
     /* Premium Revenue-Driven Ad slots styling overrides */
     .ad-slot {
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      background: transparent;
+      border: none;
+      border-radius: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -314,17 +314,11 @@
       padding: 6px 4px;
       transition: var(--transition-normal);
       color: var(--text-muted);
-      box-shadow: var(--shadow-sm);
     }
 
-    /* CLS containment placeholder */
+    /* Shimmer disabled — ad slots are transparent */
     .ad-slot::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-      animation: shimmer 1.5s infinite;
-      pointer-events: none;
+      display: none;
     }
 
     .ad-label {
@@ -355,18 +349,27 @@
     .ad-leaderboard {
       width: 100%;
       max-width: 970px;
-      min-height: 50px;
+      /* Min-height pre-reserves space for the tallest allowed ad (300x250 MPU + padding) */
+      min-height: 270px;
       height: auto;
       margin: 0 auto 24px;
     }
 
+    /* GPT-injected container div: constrain width to slot, never wider */
     .ad-slot div[id^="div-gpt-ad"] {
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
+      max-width: 100% !important;
       width: 100% !important;
       min-height: 50px;
       overflow: visible !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Google __container__ and iframe wrapper divs with hardcoded width inline styles */
+    .ad-slot div[id*="__container__"] {
+      max-width: 100% !important;
     }
 
     .ad-slot div[id^="div-gpt-ad"] iframe {
@@ -377,7 +380,9 @@
 
     .ad-sidebar {
       width: 160px;
+      max-width: 160px;
       height: 600px;
+      overflow: visible;
       position: absolute;
       top: 100px;
       z-index: 5;
@@ -397,7 +402,9 @@
     .ad-in-content {
       width: 100%;
       max-width: 100%;
-      height: 120px;
+      /* height: auto allows the slot to grow to fit any ad size served (50px banner to 300x250 MPU) */
+      height: auto;
+      min-height: 270px;
       margin: 20px auto;
     }
 

@@ -557,9 +557,9 @@
 
     /* Sponsor slots */
     .ad-slot {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      background: transparent;
+      border: none;
+      border-radius: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -574,7 +574,7 @@
     }
     
     .ad-slot:hover {
-      border-color: var(--border-hover);
+      border-color: transparent;
     }
 
     .ad-label {
@@ -603,18 +603,27 @@
     .ad-leaderboard {
       width: 100%;
       max-width: 970px;
-      min-height: 50px;
+      /* Min-height pre-reserves space for the tallest allowed ad (300x250 MPU + padding) */
+      min-height: 270px;
       height: auto;
       margin-bottom: 16px;
     }
 
+    /* GPT-injected container div: constrain width to the slot, never wider */
     .ad-slot div[id^="div-gpt-ad"] {
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
+      max-width: 100% !important;
       width: 100% !important;
       min-height: 50px;
       overflow: visible !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Google __container__ and iframe wrapper divs with hardcoded width inline styles */
+    .ad-slot div[id*="__container__"] {
+      max-width: 100% !important;
     }
 
     .ad-slot div[id^="div-gpt-ad"] iframe {
@@ -626,6 +635,8 @@
     .ad-sidebar {
       width: 160px;
       min-height: 600px;
+      max-width: 160px;
+      overflow: visible;
       position: absolute;
       top: 0;
       z-index: 10;
@@ -646,6 +657,15 @@
       .ad-sidebar {
         display: flex;
       }
+    }
+
+    .ad-in-content {
+      width: 100%;
+      max-width: 100%;
+      /* height: auto allows the slot to grow to fit any ad size served (50px banner to 300x250 MPU) */
+      height: auto;
+      min-height: 270px;
+      margin: 20px auto;
     }
 
     .upload-container {
