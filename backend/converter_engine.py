@@ -22,8 +22,14 @@ def convert_image_bytes(
     fmt = normalize_format(target_format)
     ext = extension_for_format(fmt)
     
-    # Load image from bytes
-    image = Image.open(io.BytesIO(image_bytes))
+    # Load and validate image from bytes
+    with Image.open(io.BytesIO(image_bytes)) as raw_image:
+        w, h = raw_image.size
+        if w > 4096 or h > 4096:
+            raise ValueError(f"image dimensions {w}x{h} exceed maximum allowed 4,096 px")
+        if (w * h) > 8_000_000:
+            raise ValueError(f"image pixel count ({w * h} px) exceeds maximum allowed 8 MP")
+        image = raw_image.copy()
     
     # Handle alpha channel issues for JPEG
     if fmt == "JPEG":
@@ -68,6 +74,13 @@ def convert_video_bytes(
     fmt = target_format.strip().lower()
     if fmt not in {"mp4", "webm", "gif"}:
         raise ValueError(f"Unsupported target video format: {fmt}")
+
+    try:
+        from .limits import validate_video_source
+    except ImportError:
+        from limits import validate_video_source
+
+    validate_video_source(video_bytes, filename)
         
     source_stem = sanitize_stem(filename)
     source_ext = Path(filename).suffix.lower() if filename else ".mp4"

@@ -189,6 +189,13 @@ def process_single_video_resize(task: ResizeTask) -> ResizeResult:
     composited = None
 
     try:
+        from .limits import validate_video_source
+    except ImportError:
+        from limits import validate_video_source
+
+    validate_video_source(task.image_bytes, task.filename)
+
+    try:
         # Write input video bytes to temp file
         with tempfile.NamedTemporaryFile(suffix=ext, delete=False) as temp_in:
             temp_in.write(task.image_bytes)
@@ -348,7 +355,8 @@ def process_resize_batch(tasks: Sequence[ResizeTask]) -> list[ResizeResult]:
     if len(tasks) == 1:
         return [process_single_resize(tasks[0])]
 
-    worker_count = min(8, len(tasks), os.cpu_count() or 1)
+    # On Hobby, limit to at most 2 worker threads
+    worker_count = min(2, len(tasks), os.cpu_count() or 1)
     if worker_count <= 1:
         return [process_single_resize(task) for task in tasks]
 
@@ -365,6 +373,14 @@ def _build_target(width: str, height: str) -> ResizeTarget:
 
     if target_width <= 0 or target_height <= 0:
         raise ValueError("target dimensions must be positive")
+
+    if target_width > 4096 or target_height > 4096:
+        raise ValueError("target dimensions cannot exceed 4,096 px")
+
+    if (target_width * target_height) > 4_000_000:
+        raise ValueError(
+            f"target {target_width}x{target_height} ({target_width * target_height / 1_000_000:.1f} MP) exceeds the 4 megapixel limit"
+        )
 
     return ResizeTarget(target_width, target_height)
 

@@ -145,7 +145,7 @@ def _save_jpeg_candidate(image: Image.Image, quality: int, *, optimize: bool = T
 
 
 def _encode_jpeg_under_limit(image: Image.Image, max_bytes: int) -> bytes | None:
-    best_bytes: bytes | None = None
+    best_under_limit: bytes | None = None
     low = OPTIMIZATION_SETTINGS.jpeg_quality_min
     high = OPTIMIZATION_SETTINGS.jpeg_quality_max
 
@@ -153,19 +153,17 @@ def _encode_jpeg_under_limit(image: Image.Image, max_bytes: int) -> bytes | None
         candidate = _save_jpeg_candidate(image, quality)
         if len(candidate) <= max_bytes:
             return candidate
-        if best_bytes is None or len(candidate) < len(best_bytes):
-            best_bytes = candidate
 
     while low <= high:
         quality = (low + high) // 2
         candidate = _save_jpeg_candidate(image, quality)
         if len(candidate) <= max_bytes:
-            best_bytes = candidate
+            best_under_limit = candidate
             low = quality + 1
         else:
             high = quality - 1
 
-    return best_bytes
+    return best_under_limit
 
 
 def _save_png_candidate(image: Image.Image, colors: int) -> bytes:
@@ -179,40 +177,31 @@ def _save_png_candidate(image: Image.Image, colors: int) -> bytes:
 
 
 def _encode_png_under_limit(image: Image.Image, max_bytes: int) -> bytes | None:
-    best_bytes: bytes | None = None
-    best_size: int | None = None
-
     for colors in OPTIMIZATION_SETTINGS.png_quantize_colors:
         candidate = _save_png_candidate(image, colors)
-        candidate_size = len(candidate)
-        if best_size is None or candidate_size < best_size:
-            best_bytes = candidate
-            best_size = candidate_size
-        if candidate_size <= max_bytes:
+        if len(candidate) <= max_bytes:
             return candidate
 
-    return None if best_size is None else (
-        best_bytes if best_size <= max_bytes else None
-    )
+    return None
 
 
 def optimize_banner_bytes(
     image: Image.Image,
     max_output_bytes: int | None = None,
 ) -> tuple[bytes | None, str | None]:
-    """Encode a banner under the configured size limit."""
+    """Encode a banner strictly under the configured size limit with no oversized fallbacks."""
     limit = max_output_bytes if max_output_bytes is not None else OPTIMIZATION_SETTINGS.max_output_bytes
 
     if _has_alpha(image):
         optimized = _encode_png_under_limit(image, limit)
-        if optimized is None:
-            optimized = _save_png_candidate(image, 64)
-        return optimized, ("PNG" if optimized is not None else None)
+        if optimized is not None and len(optimized) <= limit:
+            return optimized, "PNG"
+        return None, None
 
     optimized = _encode_jpeg_under_limit(image, limit)
-    if optimized is None:
-        optimized = _save_jpeg_candidate(image, OPTIMIZATION_SETTINGS.jpeg_quality_floor)
-    return optimized, ("JPEG" if optimized is not None else None)
+    if optimized is not None and len(optimized) <= limit:
+        return optimized, "JPEG"
+    return None, None
 
 
 def process_single_video_optimization(task: OptimizationTask) -> OptimizationResult:
@@ -226,6 +215,13 @@ def process_single_video_optimization(task: OptimizationTask) -> OptimizationRes
     temp_out_path = None
     video = None
     resized_video = None
+
+    try:
+        from .limits import validate_video_source
+    except ImportError:
+        from limits import validate_video_source
+
+    validate_video_source(task.banner_bytes, task.filename)
 
     try:
         # Write input video bytes to temp file
@@ -311,9 +307,12 @@ def process_single_video_optimization(task: OptimizationTask) -> OptimizationRes
             os.unlink(temp_out_path)
             temp_out_path = None
 
+        if output_bytes is not None and len(output_bytes) > target_bytes:
+            output_bytes = None
+
         if output_bytes is None:
             raise ValueError(
-                f"could not compress video banner to <= {target_bytes // 1024} KB"
+                f"target_size_unachievable: could not compress video banner to <= {target_bytes // 1024} KB"
             )
 
         output_name = f"{source_name}_optimized{ext}"
@@ -374,9 +373,9 @@ def process_single_optimization(task: OptimizationTask) -> OptimizationResult:
             resized_banner = banner.copy()
 
         output_bytes, output_format = optimize_banner_bytes(resized_banner, limit)
-        if output_bytes is None or output_format is None:
+        if output_bytes is None or output_format is None or len(output_bytes) > limit:
             raise ValueError(
-                f"could not compress banner to <= {limit // 1024} KB"
+                f"target_size_unachievable: could not compress banner to <= {limit // 1024} KB at acceptable quality"
             )
 
         output_name = f"{source_name}_optimized.{extension_for_format(output_format)}"

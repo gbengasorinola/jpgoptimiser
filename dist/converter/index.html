@@ -335,26 +335,111 @@
       border-radius: 99px;
       font-weight: 700;
     }
+  
+    /* Brand Logo & Icon Styles */
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      text-decoration: none;
+      color: inherit;
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 0;
+      height: 100%;
+    }
+    .site-logo {
+      width: 200px;
+      height: auto;
+      max-width: 200px;
+      aspect-ratio: 1985 / 427;
+      margin: 0;
+      padding: 0;
+      object-fit: contain;
+      display: block;
+      align-self: center;
+      flex-shrink: 0;
+      transition: transform var(--transition-fast), opacity var(--transition-fast);
+    }
+    .logo-container:hover .site-logo {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+    [data-theme="dark"] .site-logo {
+      filter: brightness(1.22) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+    }
+    .footer-brand {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .footer-logo {
+      width: 180px;
+      height: auto;
+      max-width: min(180px, 70vw);
+      aspect-ratio: 1985 / 427;
+      margin: 0;
+      padding: 0;
+      object-fit: contain;
+      display: block;
+      opacity: 0.85;
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+    }
+    .footer-logo:hover {
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+    [data-theme="dark"] .footer-logo {
+      filter: brightness(1.22);
+    }
+    @media (min-width: 993px) and (max-width: 1140px) {
+      .header-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 70px;
+      min-height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      box-sizing: border-box;
+    }
+      .site-logo { width: 175px; max-width: 175px; }
+      .header-nav { gap: 2px; }
+      .nav-link, .dropdown-toggle { padding: 6px 8px; font-size: 0.82rem; }
+    }
+    @media (max-width: 992px) {
+      .site-logo { width: 170px; max-width: min(170px, 55vw); height: auto; aspect-ratio: 1985 / 427; }
+    }
+    @media (max-width: 480px) {
+      .header-container { padding: 8px 12px; min-height: 52px; }
+      .site-logo { width: 145px; max-width: min(145px, 50vw); }
+      .menu-toggle { width: 36px; height: 36px; }
+    }
+    @media (max-width: 360px) {
+      .header-container { padding: 0 10px;
+      height: 50px;
+      min-height: 50px; }
+      .site-logo { width: 130px; max-width: min(130px, 46vw); }
+    }
   </style>
+  <!-- Favicon & Brand Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/icon.png">
+  <link rel="shortcut icon" href="/images/favicon.png">
 </head>
 <body>
   <header>
     <div class="header-container">
-      <a href="/" class="logo-container">
-        <div class="logo-ring-icon">
-          <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
-            <defs>
-              <linearGradient id="logoArcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#06b6d4"/>
-                <stop offset="50%" stop-color="#2563eb"/>
-                <stop offset="100%" stop-color="#10b981"/>
-              </linearGradient>
-            </defs>
-            <circle cx="18" cy="18" r="14" stroke="url(#logoArcGrad)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="72 16" />
-            <circle cx="18" cy="18" r="4.5" fill="#2563eb" />
-          </svg>
-        </div>
-        <div class="logo-text">GLOBE<span>OPTIMISER</span></div>
+      <a href="/" class="logo-container" aria-label="GlobeOptimiser Home">
+        <img src="/images/wordmark-ii.png" alt="GlobeOptimiser" class="site-logo" width="200" height="43">
       </a>
       <nav class="header-nav" id="headerNav">
         <a href="/" class="nav-link">Convert images</a>

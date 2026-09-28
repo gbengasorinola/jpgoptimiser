@@ -80,15 +80,26 @@ class PlacementDecision:
     logo_height: int
 
 
-def load_image_bytes(image_bytes: bytes) -> tuple[Image.Image, str]:
-    """Open image bytes with Pillow and return a detached image plus its format."""
+def load_image_bytes(
+    image_bytes: bytes,
+    max_pixels: int = 8_000_000,
+    max_dimension: int = 4096,
+) -> tuple[Image.Image, str]:
+    """Open image bytes with Pillow, validate dimensions against decompression bomb limits, and return image copy."""
 
     try:
         with Image.open(BytesIO(image_bytes)) as image:
+            w, h = image.size
+            if w > max_dimension or h > max_dimension:
+                raise ValueError(f"image dimensions {w}x{h} exceed maximum allowed {max_dimension} px")
+            if (w * h) > max_pixels:
+                raise ValueError(f"image pixel count ({w * h} px) exceeds maximum allowed {max_pixels} px")
             image.load()
             image_format = image.format or "PNG"
             return image.copy(), image_format
-    except Exception as exc:  # Pillow raises many exception types for bad input
+    except ValueError:
+        raise
+    except Exception as exc:
         raise ValueError("corrupted or unsupported image") from exc
 
 
@@ -537,8 +548,8 @@ def process_banner_batch(tasks: Sequence[BannerTask]) -> list[BannerResult]:
     if len(tasks) == 1:
         return [process_single_banner(tasks[0])]
 
-    # Use a bounded thread pool for batch image work without oversubscribing tiny batches.
-    worker_count = min(8, len(tasks), os.cpu_count() or 1)
+    # On Hobby, limit to at most 2 worker threads
+    worker_count = min(2, len(tasks), os.cpu_count() or 1)
     if worker_count <= 1:
         return [process_single_banner(task) for task in tasks]
 

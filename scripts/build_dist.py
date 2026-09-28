@@ -70,7 +70,21 @@ def main() -> None:
         shutil.copy2(SOURCE_CONVERT_VIDEO, CONVERT_VIDEO_INDEX)
     if SOURCE_WATERMARK_VIDEO.exists():
         shutil.copy2(SOURCE_WATERMARK_VIDEO, WATERMARK_VIDEO_INDEX)
-    
+
+    # Copy images & favicon
+    source_images = PROJECT_ROOT / "frontend" / "images"
+    if not source_images.exists():
+        source_images = PROJECT_ROOT / "images"
+    dist_images = DIST_DIR / "images"
+    dist_images.mkdir(parents=True, exist_ok=True)
+    for img_file in source_images.glob("*"):
+        if img_file.is_file():
+            shutil.copy2(img_file, dist_images / img_file.name)
+    fav = source_images / "favicon.png"
+    if fav.exists():
+        shutil.copy2(fav, DIST_DIR / "favicon.png")
+        shutil.copy2(fav, DIST_DIR / "favicon.ico")
+
     print(f"Built {DIST_INDEX}")
     print(f"Built {OPTIMISER_INDEX}")
     print(f"Built {CONVERTER_INDEX}")
@@ -82,6 +96,7 @@ def main() -> None:
     print(f"Built {RESIZE_VIDEO_INDEX}")
     print(f"Built {CONVERT_VIDEO_INDEX}")
     print(f"Built {WATERMARK_VIDEO_INDEX}")
+    print(f"Copied images and favicon to {dist_images}")
 
 
 if __name__ == "__main__":

@@ -433,6 +433,12 @@
     }
   </style>
   
+  <!-- Favicon & Brand Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/icon.png">
+  <link rel="shortcut icon" href="/images/favicon.png">
+
   {% block extra_head %}{% endblock %}
 
   <!-- Injected JSON-LD Schemas -->
@@ -446,21 +452,8 @@
 
   <header>
     <div class="header-container">
-      <a href="/" class="logo-container">
-        <div class="logo-ring-icon">
-          <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
-            <defs>
-              <linearGradient id="logoArcGradBase" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#06b6d4"/>
-                <stop offset="50%" stop-color="#2563eb"/>
-                <stop offset="100%" stop-color="#10b981"/>
-              </linearGradient>
-            </defs>
-            <circle cx="18" cy="18" r="14" stroke="url(#logoArcGradBase)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="72 16" />
-            <circle cx="18" cy="18" r="4.5" fill="#2563eb" />
-          </svg>
-        </div>
-        <div class="logo-text">GLOBE<span>OPTIMISER</span></div>
+      <a href="/" class="logo-container" aria-label="GlobeOptimiser Home">
+        <img src="/images/wordmark-ii.png" alt="GlobeOptimiser" class="site-logo" width="200" height="43">
       </a>
       <nav class="header-nav" id="headerNav">
         <!-- Video Tools Dropdown -->
@@ -712,6 +705,11 @@
         </div>
       </div>
       <div class="footer-bottom">
+        <div class="footer-brand">
+          <a href="/" aria-label="GlobeOptimiser Home">
+            <img src="/images/wordmark-ii.png" alt="GlobeOptimiser" class="footer-logo" width="180" height="39">
+          </a>
+        </div>
         <p>&copy; 2026 globeoptimiser.com. Built for clean bulk conversion and optimization workflows.</p>
       </div>
     </div>

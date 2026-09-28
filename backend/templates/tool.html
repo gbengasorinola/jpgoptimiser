@@ -470,6 +470,26 @@
         </div>
       </div>
 
+      <!-- Error Notification Banner -->
+      <div class="panel error-panel" id="errorBanner" style="display: none; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: flex-start; gap: 14px;">
+          <div style="color: var(--danger); flex-shrink: 0; padding-top: 2px;">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <div style="flex-grow: 1;">
+            <h4 id="errorBannerTitle" style="margin: 0 0 4px 0; font-size: 0.95rem; font-weight: 700; color: var(--danger);">Processing Error</h4>
+            <p id="errorBannerMessage" style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5;"></p>
+          </div>
+          <button type="button" id="dismissErrorBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px;" aria-label="Dismiss error">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+
       <!-- Results drawer panel -->
       <section class="panel results-panel" id="resultsPanel" style="display: none;">
         <div class="results-header">
@@ -677,6 +697,27 @@
   const resultsPanel = document.getElementById('resultsPanel');
   const resultsGrid = document.getElementById('resultsGrid');
   const downloadAllBtn = document.getElementById('downloadAllBtn');
+
+  const errorBanner = document.getElementById('errorBanner');
+  const errorBannerTitle = document.getElementById('errorBannerTitle');
+  const errorBannerMessage = document.getElementById('errorBannerMessage');
+  const dismissErrorBtn = document.getElementById('dismissErrorBtn');
+
+  const showError = (title, message) => {
+    if (!errorBanner) return;
+    errorBannerTitle.textContent = title;
+    errorBannerMessage.textContent = message;
+    errorBanner.style.display = 'block';
+    errorBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
+  const hideError = () => {
+    if (errorBanner) errorBanner.style.display = 'none';
+  };
+
+  if (dismissErrorBtn) {
+    dismissErrorBtn.addEventListener('click', hideError);
+  }
 
   // Application State
   const state = {
@@ -996,7 +1037,8 @@
   // Submit process files action
   submitBtn.addEventListener('click', async () => {
     if (submitBtn.disabled) return;
-    
+
+    hideError();
     resultsPanel.style.display = 'none';
     resultsGrid.innerHTML = '';
     downloadAllBtn.style.display = 'none';
@@ -1006,7 +1048,7 @@
 
     const mode = state.activeTab;
     const formData = new FormData();
-    
+
     const customName = outputNameInput.value.trim();
     if (customName) {
       formData.append('custom_name', customName);
@@ -1060,7 +1102,7 @@
           const blob = xhr.response;
           const contentType = xhr.getResponseHeader('Content-Type') || '';
           const disposition = xhr.getResponseHeader('Content-Disposition') || '';
-          
+
           let filename = `optimised_output`;
           const filenameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
           if (filenameMatch && filenameMatch[1]) {
@@ -1073,25 +1115,36 @@
           state.results = [{ blob, filename, contentType }];
           renderResults();
         } else {
-          let errorText = 'An error occurred during image processing.';
+          let errorTitle = xhr.status === 413 ? 'Budget Limit Exceeded' : (xhr.status === 422 ? 'Unachievable Target or Invalid Input' : 'Processing Failed');
+          let errorText = 'An error occurred during processing.';
           try {
             const errBlob = xhr.response;
             const text = await errBlob.text();
-            errorText = text || `HTTP Error ${xhr.status}`;
+            try {
+              const data = JSON.parse(text);
+              if (data.detail) errorText = data.detail;
+              if (data.code === 'target_size_unachievable') {
+                errorTitle = 'Target Size Unachievable';
+              } else if (data.code === 'request_too_large' || data.code === 'file_too_large' || data.code === 'total_upload_too_large' || data.code === 'too_many_files' || data.code === 'zip_bomb_detected') {
+                errorTitle = 'Hobby Processing Limit Exceeded';
+              }
+            } catch(jsonErr) {
+              if (text) errorText = text;
+            }
           } catch(e) {}
-          alert(`Error: ${errorText}`);
+          showError(errorTitle, errorText);
         }
       };
 
       xhr.onerror = () => {
         setLoading(false);
-        alert('Network request failed. Ensure the backend server is running and accessible.');
+        showError('Network Error', 'Network request failed. Ensure the server is reachable and your request is within payload limits.');
       };
 
       xhr.send(formData);
     } catch (err) {
       setLoading(false);
-      alert(`Request failed: ${err.message}`);
+      showError('Execution Error', `Request failed: ${err.message}`);
     }
   });
 
