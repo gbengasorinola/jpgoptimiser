@@ -374,6 +374,14 @@ def test_branding_assets_and_favicons() -> None:
     assert "/images/icon.png" in root_resp.text
 
 
+def test_google_tag_manager_present() -> None:
+    for route in ["/", "/about.html", "/contact.html", "/privacy.html"]:
+        resp = client.get(route)
+        assert resp.status_code == 200
+        assert "GTM-PMLWVRFC" in resp.text
+        assert "https://www.googletagmanager.com/ns.html?id=GTM-PMLWVRFC" in resp.text
+
+
 def test_request_body_exceeds_budget_returns_413() -> None:
     oversized_data = b"0" * (4 * 1024 * 1024)
     response = client.post(
