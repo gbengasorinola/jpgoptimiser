@@ -96,6 +96,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
       );
       if (anchorSlot) {
+        // Force SafeFrame so the ad is sandboxed and cannot break out of its container
+        anchorSlot.setForceSafeFrame(true);
         anchorSlot.addService(googletag.pubads());
       }
 
@@ -439,7 +441,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       0% { transform: translateX(-100%); }
       100% { transform: translateX(100%); }
     }
-  </style>
+
+    /* ============================================================
+       ANCHOR AD HEIGHT CAP
+       GPT injects the bottom-anchor ad into a fixed-position div
+       with id containing "google_ads_anchor". We cap its height so
+       it never covers more than ~100px of the screen.
+       The !important overrides any inline styles GPT may inject.
+       ============================================================ */
+    div[id*="google_ads_anchor"],
+    div[id*="google_ads_anchor"] > div,
+    div[id*="google_ads_anchor"] iframe,
+    /* SafeFrame container for anchor ads */
+    div[id*="anchor"] > div[id*="__container__"],
+    div[id*="anchor"] iframe {
+      max-height: 100px !important;
+      overflow: hidden !important;
+    }
+
+    /* Prevent the GPT anchor wrapper itself from being taller than 100px */
+    div[id*="google_ads_anchor"] {
+      max-height: 100px !important;
+      min-height: unset !important;
+    }
+</style>
   
   <!-- Favicon & Brand Icons -->
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
