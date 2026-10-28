@@ -79,10 +79,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .addSize([0, 0], [[300, 250], [320, 50], "fluid"])
         .build();
 
-      var mappingSidebar = googletag.sizeMapping()
-        .addSize([1360, 0], [[160, 600], [120, 600], "fluid"])
-        .addSize([0, 0], [])
-        .build();
 
       var mappingTop = mappingBanner;
       var mappingBody = mappingBanner;
@@ -117,18 +113,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       var slotsToRegister = [
         {
-          path: "/23043164651/globeoptimiser_sidebar2",
-          sizes: [[160, 600], [120, 600], "fluid"],
-          div: "div-gpt-ad-1789999691219-0",
-          type: "sidebar"
-        },
-        {
-          path: "/23043164651/globeoptimiser_sidebar1",
-          sizes: [[160, 600], [120, 600], "fluid"],
-          div: "div-gpt-ad-1789999580078-0",
-          type: "sidebar"
-        },
-        {
           path: "/23043164651/globeoptimiser_banner1",
           sizes: bannerSizes,
           div: "div-gpt-ad-1789998229083-0",
@@ -155,9 +139,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       ];
 
       slotsToRegister.forEach(function(config) {
-        var mapping = config.type === "sidebar" ? mappingSidebar : mappingBanner;
         var definedSlot = googletag.defineSlot(config.path, config.sizes, config.div)
-          .defineSizeMapping(mapping)
+          .defineSizeMapping(mappingBanner)
           .addService(googletag.pubads());
 
         window.gptTrackingEngine.refreshableSlots.push(definedSlot);
@@ -221,8 +204,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }, { threshold: [0.0, 0.5, 1.0] });
 
         var slotDivIds = [
-          "div-gpt-ad-1789999691219-0",
-          "div-gpt-ad-1789999580078-0",
           "div-gpt-ad-1789998229083-0",
           "div-gpt-ad-1790267192349-0",
           "div-gpt-ad-1790267487184-0",
@@ -388,27 +369,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       max-width: 100% !important;
     }
 
-    .ad-sidebar {
-      width: 160px;
-      max-width: 160px;
-      height: 600px;
-      overflow: visible;
-      position: absolute;
-      top: 100px;
-      z-index: 5;
-      display: none;
-    }
-
-    .ad-sidebar:first-of-type,
-    .ad-sidebar.ad-sidebar-left {
-      right: calc(100% + 24px);
-    }
-
-    .ad-sidebar:last-of-type,
-    .ad-sidebar.ad-sidebar-right {
-      left: calc(100% + 24px);
-    }
-
     .ad-in-content {
       width: 100%;
       max-width: 100%;
@@ -416,12 +376,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       height: auto;
       min-height: 270px;
       margin: 20px auto;
-    }
-
-    @media (min-width: 1360px) {
-      .ad-sidebar {
-        display: flex;
-      }
     }
 
     @media (max-width: 768px) {
