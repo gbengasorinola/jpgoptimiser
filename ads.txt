@@ -1,0 +1,13 @@
+google.com, pub-7815221232752525, DIRECT, f08c47fec0942fa0
+google.com, pub-1695082479149669, DIRECT, f08c47fec0942fa0
+google.com, pub-2917233316780238, DIRECT, f08c47fec0942fa0
+onetag.com, 8e9527dfe45695d, DIRECT
+onetag.com, 8e9527dfe45695d-OB, DIRECT
+appnexus.com, 13099, RESELLER
+pubmatic.com, 161593, RESELLER, 5d62403b186f2ace
+rubiconproject.com, 11006, RESELLER, 0bfd66d529a55807
+openx.com, 561226810, DIRECT, 6a698e2ec38604c6
+openx.com, 561226810, RESELLER, 6a698e2ec38604c6
+pubmatic.com, 159855, DIRECT, 5d62403b186f2ace
+rubiconproject.com, 22884, DIRECT, 0bfd66d529a55807
+adingo.jp, 31966, RESELLER
