@@ -1,103 +1,91 @@
+"""Pre-render the working production templates for Cloudflare static assets."""
 from __future__ import annotations
-
-from pathlib import Path
+import json
+import re
 import shutil
-
+import sys
+from html import escape
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SOURCE_INDEX = PROJECT_ROOT / "frontend" / "index.html"
-SOURCE_CONVERTER = PROJECT_ROOT / "frontend" / "converter.html"
-SOURCE_ABOUT = PROJECT_ROOT / "frontend" / "about.html"
-SOURCE_PRIVACY = PROJECT_ROOT / "frontend" / "privacy.html"
-SOURCE_TERMS = PROJECT_ROOT / "frontend" / "terms.html"
-SOURCE_CONTACT = PROJECT_ROOT / "frontend" / "contact.html"
-SOURCE_COMPRESS_VIDEO = PROJECT_ROOT / "frontend" / "compress-video.html"
-SOURCE_RESIZE_VIDEO = PROJECT_ROOT / "frontend" / "resize-video.html"
-SOURCE_CONVERT_VIDEO = PROJECT_ROOT / "frontend" / "convert-video.html"
-SOURCE_WATERMARK_VIDEO = PROJECT_ROOT / "frontend" / "watermark-video.html"
+sys.path.insert(0, str(PROJECT_ROOT))
+from backend.seo_config import BLOG_ARTICLES, get_all_paths, get_related_links, resolve_seo_data
 
-DIST_DIR = PROJECT_ROOT / "dist"
-DIST_INDEX = DIST_DIR / "index.html"
-OPTIMISER_DIR = DIST_DIR / "optimiser"
-OPTIMISER_INDEX = OPTIMISER_DIR / "index.html"
-CONVERTER_DIR = DIST_DIR / "converter"
-CONVERTER_INDEX = CONVERTER_DIR / "index.html"
-ABOUT_DIR = DIST_DIR / "about"
-ABOUT_INDEX = ABOUT_DIR / "index.html"
-PRIVACY_DIR = DIST_DIR / "privacy"
-PRIVACY_INDEX = PRIVACY_DIR / "index.html"
-TERMS_DIR = DIST_DIR / "terms"
-TERMS_INDEX = TERMS_DIR / "index.html"
-CONTACT_DIR = DIST_DIR / "contact"
-CONTACT_INDEX = CONTACT_DIR / "index.html"
+DIST_DIR = PROJECT_ROOT / 'dist'
+DOMAIN = 'https://globeoptimiser.com'
+ENV = Environment(loader=FileSystemLoader(PROJECT_ROOT / 'backend/templates'), autoescape=select_autoescape(['html', 'xml']))
 
-COMPRESS_VIDEO_DIR = DIST_DIR / "compress-video"
-COMPRESS_VIDEO_INDEX = COMPRESS_VIDEO_DIR / "index.html"
-RESIZE_VIDEO_DIR = DIST_DIR / "resize-video"
-RESIZE_VIDEO_INDEX = RESIZE_VIDEO_DIR / "index.html"
-CONVERT_VIDEO_DIR = DIST_DIR / "convert-video"
-CONVERT_VIDEO_INDEX = CONVERT_VIDEO_DIR / "index.html"
-WATERMARK_VIDEO_DIR = DIST_DIR / "watermark-video"
-WATERMARK_VIDEO_INDEX = WATERMARK_VIDEO_DIR / "index.html"
+def static_body(page):
+    source = (PROJECT_ROOT / 'frontend' / f'{page}.html').read_text(encoding='utf-8')
+    match = re.search(r'<(article|div)\b[^>]*class="about-card"[^>]*>(.*?)</\1>', source, re.S)
+    if not match:
+        raise ValueError(f'Missing informational content for {page}')
+    return re.sub(r'<h1\b[^>]*>.*?</h1>', '', match.group(2), flags=re.S)
 
+def tool_schema(path, seo):
+    crumbs = [{'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': DOMAIN + '/'}]
+    if path:
+        crumbs.append({'@type': 'ListItem', 'position': 2, 'name': path.replace('-', ' ').title(), 'item': DOMAIN + '/' + path})
+    schemas = [
+        {'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': crumbs},
+        {'@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': seo['title'], 'operatingSystem': 'All',
+         'applicationCategory': 'ImageApplication', 'offers': {'@type': 'Offer', 'price': '0.00', 'priceCurrency': 'USD'}},
+    ]
+    if seo.get('faqs'):
+        schemas.append({'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [
+            {'@type': 'Question', 'name': f['q'], 'acceptedAnswer': {'@type': 'Answer', 'text': f['a']}} for f in seo['faqs']
+        ]})
+    return json.dumps(schemas).replace('</', '<\\/')
 
-def main() -> None:
-    DIST_DIR.mkdir(parents=True, exist_ok=True)
-    OPTIMISER_DIR.mkdir(parents=True, exist_ok=True)
-    CONVERTER_DIR.mkdir(parents=True, exist_ok=True)
-    ABOUT_DIR.mkdir(parents=True, exist_ok=True)
-    PRIVACY_DIR.mkdir(parents=True, exist_ok=True)
-    TERMS_DIR.mkdir(parents=True, exist_ok=True)
-    CONTACT_DIR.mkdir(parents=True, exist_ok=True)
-    COMPRESS_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
-    RESIZE_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
-    CONVERT_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
-    WATERMARK_VIDEO_DIR.mkdir(parents=True, exist_ok=True)
-    
-    shutil.copy2(SOURCE_INDEX, DIST_INDEX)
-    shutil.copy2(SOURCE_INDEX, OPTIMISER_INDEX)
-    shutil.copy2(SOURCE_CONVERTER, CONVERTER_INDEX)
-    shutil.copy2(SOURCE_ABOUT, ABOUT_INDEX)
-    shutil.copy2(SOURCE_PRIVACY, PRIVACY_INDEX)
-    shutil.copy2(SOURCE_TERMS, TERMS_INDEX)
-    shutil.copy2(SOURCE_CONTACT, CONTACT_INDEX)
-    
-    if SOURCE_COMPRESS_VIDEO.exists():
-        shutil.copy2(SOURCE_COMPRESS_VIDEO, COMPRESS_VIDEO_INDEX)
-    if SOURCE_RESIZE_VIDEO.exists():
-        shutil.copy2(SOURCE_RESIZE_VIDEO, RESIZE_VIDEO_INDEX)
-    if SOURCE_CONVERT_VIDEO.exists():
-        shutil.copy2(SOURCE_CONVERT_VIDEO, CONVERT_VIDEO_INDEX)
-    if SOURCE_WATERMARK_VIDEO.exists():
-        shutil.copy2(SOURCE_WATERMARK_VIDEO, WATERMARK_VIDEO_INDEX)
+def render_page(path):
+    if path == 'blog':
+        return ENV.get_template('blog_list.html').render(articles=BLOG_ARTICLES, seo_data={
+            'title': 'Blog — Image Optimization Insights | globeoptimiser.com',
+            'meta_description': 'Image optimisation, formats and web performance insights.',
+            'canonical': '/blog', 'active_tab': 'blog'})
+    if path.startswith('blog/'):
+        slug = path.removeprefix('blog/')
+        post = dict(BLOG_ARTICLES[slug])
+        paragraphs = [p.strip() for p in post['content'].split('</p>') if p.strip()]
+        midpoint = len(paragraphs) // 2
+        if midpoint:
+            ad = '''<div class="ad-slot ad-in-content" aria-label="Advertisement"><span class="ad-label">Advertisement</span>
+<div id="div-gpt-ad-1790268002577-0" style="min-width:200px;min-height:50px">
+<script>googletag.cmd.push(function(){googletag.display("div-gpt-ad-1790268002577-0");});</script></div></div>'''
+            paragraphs.insert(midpoint, ad)
+            post['content'] = ''.join(p if p == ad else p + '</p>' for p in paragraphs)
+        seo = {'title': f"{post['title']} | globeoptimiser.com Blog", 'meta_description': post['summary'], 'canonical': '/' + path, 'active_tab': 'blog'}
+        schema = {'@context': 'https://schema.org', '@type': 'BlogPosting', 'headline': post['title'], 'description': post['summary'],
+                  'datePublished': '2026-07-10', 'author': {'@type': 'Organization', 'name': 'globeoptimiser.com'}}
+        return ENV.get_template('blog_post.html').render(post=post, seo_data=seo, schema_json=json.dumps(schema))
+    seo = resolve_seo_data(path)
+    if not seo:
+        raise ValueError(f'No SEO configuration for {path!r}')
+    if path in {'about', 'privacy', 'terms', 'contact'}:
+        return ENV.get_template('static_page.html').render(seo_data=seo, page_name=path,
+            title_header={'about': 'About Us', 'privacy': 'Privacy Policy', 'terms': 'Terms of Use', 'contact': 'Contact Us'}[path],
+            subtitle="Have questions or feedback? Drop us a line below and we'll get back to you shortly." if path == 'contact' else '',
+            html_content=static_body(path) if path != 'contact' else '')
+    return ENV.get_template('tool.html').render(seo_data=seo, related_links=get_related_links(path), schema_json=tool_schema(path, seo))
 
-    # Copy images & favicon
-    source_images = PROJECT_ROOT / "frontend" / "images"
-    if not source_images.exists():
-        source_images = PROJECT_ROOT / "images"
-    dist_images = DIST_DIR / "images"
-    dist_images.mkdir(parents=True, exist_ok=True)
-    for img_file in source_images.glob("*"):
-        if img_file.is_file():
-            shutil.copy2(img_file, dist_images / img_file.name)
-    fav = source_images / "favicon.png"
-    if fav.exists():
-        shutil.copy2(fav, DIST_DIR / "favicon.png")
-        shutil.copy2(fav, DIST_DIR / "favicon.ico")
+def main():
+    if DIST_DIR.exists():
+        shutil.rmtree(DIST_DIR)
+    DIST_DIR.mkdir()
+    paths = sorted(set(['', 'blog', *get_all_paths()]))
+    for path in paths:
+        target = DIST_DIR / path / 'index.html'
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('\n'.join(line.rstrip() for line in render_page(path).splitlines()) + '\n', encoding='utf-8')
+    shutil.copytree(PROJECT_ROOT / 'images', DIST_DIR / 'images')
+    for name in ('favicon.png', 'favicon.ico'):
+        shutil.copy2(PROJECT_ROOT / 'images/favicon.png', DIST_DIR / name)
+    (DIST_DIR / '404.html').write_text('<!doctype html><html lang="en"><meta charset="utf-8"><title>Page not found | GlobeOptimiser</title><h1>Page not found</h1><p><a href="/">Return to GlobeOptimiser</a></p></html>', encoding='utf-8')
+    (DIST_DIR / 'robots.txt').write_text(f'User-agent: *\nAllow: /\n\nSitemap: {DOMAIN}/sitemap.xml\n', encoding='utf-8')
+    urls = '\n'.join(f'  <url><loc>{escape(DOMAIN + "/" + path)}</loc></url>' for path in paths)
+    (DIST_DIR / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '\n</urlset>\n', encoding='utf-8')
+    print(f'Rendered {len(paths)} styled pages and supporting assets to {DIST_DIR}')
 
-    print(f"Built {DIST_INDEX}")
-    print(f"Built {OPTIMISER_INDEX}")
-    print(f"Built {CONVERTER_INDEX}")
-    print(f"Built {ABOUT_INDEX}")
-    print(f"Built {PRIVACY_INDEX}")
-    print(f"Built {TERMS_INDEX}")
-    print(f"Built {CONTACT_INDEX}")
-    print(f"Built {COMPRESS_VIDEO_INDEX}")
-    print(f"Built {RESIZE_VIDEO_INDEX}")
-    print(f"Built {CONVERT_VIDEO_INDEX}")
-    print(f"Built {WATERMARK_VIDEO_INDEX}")
-    print(f"Copied images and favicon to {dist_images}")
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -14,3 +14,14 @@ htmlcov/
 
 dist/.DS_Store
 .vercel
+
+node_modules/
+.wrangler/
+.build-venv/
+.dev.vars
+.env
+.env.*
+!.env.example
+
+dist/
+dist.zip

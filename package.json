@@ -4,9 +4,18 @@
   "description": "Globe Optimiser - Premium Bulk Image & Video Optimization Engine",
   "private": true,
   "scripts": {
-    "dev": ".venv/bin/uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000",
-    "start": ".venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port 8000",
-    "build": "python3 scripts/build_dist.py",
-    "test": ".venv/bin/pytest"
+    "dev": "npm run build && wrangler dev",
+    "build": "node scripts/build.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test tests/worker.test.mjs && python3 tests/check_static_build.py",
+    "dev:backend": "uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000",
+    "test:backend": "pytest"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "wrangler": "4.156.0"
   }
 }
