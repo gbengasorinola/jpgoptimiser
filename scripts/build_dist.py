@@ -79,6 +79,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text('\n'.join(line.rstrip() for line in render_page(path).splitlines()) + '\n', encoding='utf-8')
     shutil.copytree(PROJECT_ROOT / 'images', DIST_DIR / 'images')
+    shutil.copy2(PROJECT_ROOT / 'ads.txt', DIST_DIR / 'ads.txt')
     for name in ('favicon.png', 'favicon.ico'):
         shutil.copy2(PROJECT_ROOT / 'images/favicon.png', DIST_DIR / name)
     (DIST_DIR / '404.html').write_text('<!doctype html><html lang="en"><meta charset="utf-8"><title>Page not found | GlobeOptimiser</title><h1>Page not found</h1><p><a href="/">Return to GlobeOptimiser</a></p></html>', encoding='utf-8')
